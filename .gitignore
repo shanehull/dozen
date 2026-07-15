@@ -10,3 +10,10 @@ build/ios/xcode/overlay.json
 build/ios/xcode/gen/
 build/android/overlay.json
 build/android/gen/
+# Wails build scaffolds
+build/android/
+build/ios/
+build/darwin/
+build/windows/
+build/linux/
+build/docker/
