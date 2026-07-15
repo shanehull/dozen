@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=My Product
+Comment=A hp12c application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/hp12c %u
+Terminal=false
+Type=Application
+Icon=hp12c
+Categories=Utility;
+StartupWMClass=hp12c
+
+ 

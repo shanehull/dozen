@@ -1,0 +1,295 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --calc-w: 856px;
+  --calc-h: 486px;
+  --key-w: 62px;
+  --key-h: 46px;
+  --col-gap: 9px;
+  --row-gap: 48px;
+  --gold: #e8892b;
+  --blue: #4fb6da;
+  --key-text: #eceae4;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #171717;
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#scaler {
+  transform-origin: center center;
+}
+
+/* ---- Outer chassis: black shell with side rails ---- */
+#calc {
+  width: var(--calc-w);
+  padding: 12px 34px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #232323 0%, #0c0c0c 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 24px 60px rgba(0,0,0,.7),
+    0 4px 14px rgba(0,0,0,.55);
+  position: relative;
+}
+
+/* ---- Calculator body (the tan faceplate) ---- */
+#body {
+  border-radius: 3px;
+  padding: 14px 0 18px;
+  background: linear-gradient(160deg, #e7e0cd 0%, #d8cfb4 38%, #cabf9f 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.5) inset,
+    0 -2px 6px rgba(0,0,0,.15) inset,
+    0 2px 6px rgba(0,0,0,.4);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ---- Top face with display ---- */
+#topface {
+  flex: 0 0 auto;
+  padding: 4px 18px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+#display {
+  border-radius: 7px;
+  padding: 10px;
+  background: linear-gradient(180deg, #9c8a55 0%, #86723f 100%);
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.35),
+    0 1px 0 rgba(255,255,255,.35) inset;
+  width: 64%;
+  flex: 0 0 auto;
+}
+
+#lcd {
+  border-radius: 3px;
+  padding: 10px 16px 6px;
+  background: linear-gradient(175deg, #b3bd9f 0%, #9aa886 55%, #94a37f 100%);
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.45) inset,
+    0 -1px 2px rgba(255,255,255,.25) inset;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 74px;
+  justify-content: center;
+}
+
+#lcd-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  font-family: "Courier New", "DejaVu Sans Mono", monospace;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: .95;
+  color: #1c2a12;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 0 rgba(255,255,255,.15);
+  min-height: 44px;
+}
+#sign { white-space: pre; }
+#digits { white-space: pre; }
+
+#annun {
+  display: flex;
+  gap: 22px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: rgba(28,42,18,.28);
+  height: 12px;
+  padding: 0 2px;
+}
+#annun .on { color: #1c2a12; }
+
+#brand {
+  flex: 1 1 auto;
+  padding-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1;
+}
+#brand .logo {
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: .5px;
+  color: #6a5f45;
+}
+#brand .model {
+  font-weight: 700;
+  font-size: 8px;
+  letter-spacing: 3.5px;
+  color: #8a7f63;
+  margin-top: 2px;
+}
+
+/* ---- Keypad ---- */
+#keypad {
+  flex: 1 1 auto;
+  position: relative;
+  border-radius: 10px;
+  padding: 34px 20px 18px;
+  background:
+    linear-gradient(180deg, #343434 0%, #262626 100%);
+  border: 4px solid #b9ad8b;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.6) inset,
+    0 1px 0 rgba(255,255,255,.25);
+}
+
+#grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(10, var(--key-w));
+  grid-auto-rows: var(--key-h);
+  column-gap: var(--col-gap);
+  row-gap: var(--row-gap);
+  justify-content: center;
+}
+
+#brackets {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---- Keys ---- */
+.key {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: none;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #4c4c4c 0%, #3a3a3a 46%, #262626 100%);
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.14) inset,
+    0 -3px 4px rgba(0,0,0,.5) inset,
+    0 2px 3px rgba(0,0,0,.55);
+  transition: transform .04s ease, box-shadow .04s ease;
+  font-family: inherit;
+}
+.key:hover { background: linear-gradient(180deg, #565656 0%, #414141 46%, #2c2c2c 100%); }
+.key:active, .key.pressed {
+  transform: translateY(1.5px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 2px rgba(0,0,0,.4) inset,
+    0 1px 1px rgba(0,0,0,.4);
+}
+
+/* primary label on key face */
+.key .prim {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--key-text);
+}
+.key .prim.sm { font-size: 12px; }
+.key .prim.xs { font-size: 10.5px; }
+
+/* blue (g) label under the primary, on the key face */
+.key .glabel {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--blue);
+}
+
+/* gold (f) label ABOVE the key */
+.key .flabel {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gold);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* the f / g / ENTER special keys */
+.key.fkey {
+  background: linear-gradient(180deg, #f0972f 0%, #d9791d 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.35) inset,
+    0 -3px 4px rgba(0,0,0,.28) inset,
+    0 2px 3px rgba(0,0,0,.55);
+}
+.key.fkey .prim { color: #3a2408; font-weight: 800; font-size: 17px; }
+.key.gkey {
+  background: linear-gradient(180deg, #34bce6 0%, #159fce 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.4) inset,
+    0 -3px 4px rgba(0,0,0,.28) inset,
+    0 2px 3px rgba(0,0,0,.55);
+}
+.key.gkey .prim { color: #0a2f3d; font-weight: 800; font-size: 17px; }
+
+.key.armed { outline: 2px solid #f0b45a; outline-offset: 1px; }
+
+.key.enter {
+  grid-column: 6;
+  grid-row: 3 / span 2;
+  justify-content: center;
+}
+.key.enter .prim {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 1px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.key.enter .glabel { position: absolute; bottom: 4px; }
+
+/* group brackets (BOND / DEPRECIATION / CLEAR): a gold line with downward end
+   ticks, broken in the middle by a transparent caption. */
+.bracket {
+  position: absolute;
+  height: 7px;
+  display: flex;
+  align-items: flex-start;
+}
+.bracket .seg {
+  flex: 1 1 0;
+  height: 7px;
+  border-top: 1.5px solid var(--gold);
+}
+.bracket .seg.l { border-left: 1.5px solid var(--gold); }
+.bracket .seg.r { border-right: 1.5px solid var(--gold); }
+.bracket .cap {
+  flex: 0 0 auto;
+  padding: 0 7px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--gold);
+  white-space: nowrap;
+  transform: translateY(-50%);
+}

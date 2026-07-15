@@ -1,0 +1,102 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.RELEASES_GITHUB_TOKEN }}
+
+  build:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            platform: Linux_x86_64
+          - runner: ubuntu-24.04-arm
+            goos: linux
+            goarch: arm64
+            platform: Linux_arm64
+          - runner: macos-latest
+            goos: darwin
+            goarch: arm64
+            platform: Darwin_arm64
+          - runner: macos-13
+            goos: darwin
+            goarch: amd64
+            platform: Darwin_x86_64
+          - runner: windows-latest
+            goos: windows
+            goarch: amd64
+            platform: Windows_x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
+      - run: |
+          cd frontend
+          npm ci
+          npm run build
+          cd ..
+      - env:
+          CGO_ENABLED: "1"
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          binary="Dozen"
+          if [ "${{ matrix.goos }}" = "windows" ]; then binary="Dozen.exe"; fi
+          go build -tags production -trimpath -ldflags="-w -s" -o "$binary" .
+      - run: |
+          name="dozen_${{ matrix.platform }}"
+          mkdir "$name"
+          if [ -f Dozen.exe ]; then cp Dozen.exe "$name/"; else cp Dozen "$name/"; fi
+          cp README.md "$name/" 2>/dev/null || true
+          tar czf "${name}.tar.gz" "$name"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: dozen-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: "*.tar.gz"
+          retention-days: 1
+
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+          pattern: dozen-*
+          merge-multiple: true
+      - run: cd artifacts && sha256sum *.tar.gz > checksums.txt
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ needs.release-please.outputs.tag }}" \
+            artifacts/*.tar.gz \
+            artifacts/checksums.txt --clobber
