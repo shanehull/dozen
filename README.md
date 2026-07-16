@@ -111,7 +111,7 @@ c.Restore(state)
 | Arithmetic   | `Add`, `Sub`, `Mul`, `Div`, `YPowX`                                                            |
 | TVM store    | `SetN`, `SetI`, `SetPV`, `SetPMT`, `SetFV`                                                     |
 | TVM solve    | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV`                                           |
-| Cash flow    | `ComputeNPV`, `ComputeIRR`                                                                     |
+| Cash flow    | `NPV`, `IRR`                                                                                   |
 | Amortization | `Amortize`                                                                                     |
 | Bonds        | `BondPrice`, `BondYield`                                                                       |
 | Depreciation | `DepreciationSL`, `DepreciationSOYD`, `DepreciationDB`                                         |
@@ -144,6 +144,7 @@ c.Program, c.PgmLen, c.PgmPC                 // program storage
 
 ```bash
 go run examples/mortgage/main.go    # $300K mortgage payment
+go run examples/solve-tvm/main.go   # unified TVM solver
 go run examples/npv/main.go         # NPV + IRR
 go run examples/fv/main.go          # future value
 go run examples/stats/main.go       # statistics (engine)

@@ -189,9 +189,9 @@ func (c *CalcService) solveTVM(op string) {
 func (c *CalcService) unprefixed(op string, arg float64) {
 	switch op {
 	case "NPV":
-		c.e.ComputeNPV()
+		c.e.NPV()
 	case "IRR":
-		c.e.ComputeIRR()
+		c.e.IRR()
 	case "PRICE":
 		c.e.BondPrice()
 	case "YTM":
@@ -301,9 +301,9 @@ func (c *CalcService) fPrefixed(op string, arg float64, argS string) {
 	case "INT":
 		c.e.X = c.e.AmortInt
 	case "NPV":
-		c.e.ComputeNPV()
+		c.e.NPV()
 	case "IRR":
-		c.e.ComputeIRR()
+		c.e.IRR()
 	case "PRICE":
 		c.e.BondPrice()
 	case "YTM":
