@@ -3,25 +3,25 @@ package engine
 import "encoding/json"
 
 type EngineState struct {
-	X    float64      `json:"x"`
-	Y    float64      `json:"y"`
-	Z    float64      `json:"z"`
-	T    float64      `json:"t"`
-	Last float64      `json:"last"`
-	Mem  [20]float64  `json:"mem"`
+	X    float64     `json:"x"`
+	Y    float64     `json:"y"`
+	Z    float64     `json:"z"`
+	T    float64     `json:"t"`
+	Last float64     `json:"last"`
+	Mem  [20]float64 `json:"mem"`
 
-	FinN     float64     `json:"finN"`
-	FinI     float64     `json:"finI"`
-	FinPV    float64     `json:"finPV"`
-	FinPMT   float64     `json:"finPMT"`
-	FinFV    float64     `json:"finFV"`
-	FinCF0   float64     `json:"finCF0"`
-	FinCFj   [10]float64 `json:"finCFj"`
-	FinNj    [10]int     `json:"finNj"`
-	FinCfCnt int         `json:"finCfCnt"`
-	AmortN   float64     `json:"amortN"`
-	AmortInt float64     `json:"amortInt"`
-	AmortPrin float64    `json:"amortPrin"`
+	FinN      float64     `json:"finN"`
+	FinI      float64     `json:"finI"`
+	FinPV     float64     `json:"finPV"`
+	FinPMT    float64     `json:"finPMT"`
+	FinFV     float64     `json:"finFV"`
+	FinCF0    float64     `json:"finCF0"`
+	FinCFj    [10]float64 `json:"finCFj"`
+	FinNj     [10]int     `json:"finNj"`
+	FinCfCnt  int         `json:"finCfCnt"`
+	AmortN    float64     `json:"amortN"`
+	AmortInt  float64     `json:"amortInt"`
+	AmortPrin float64     `json:"amortPrin"`
 
 	Begin bool      `json:"begin"`
 	Dmy   bool      `json:"dmy"`
@@ -41,13 +41,27 @@ func (e *Engine) Snapshot() EngineState {
 }
 
 func (e *Engine) Restore(s EngineState) {
-	e.X = s.X; e.Y = s.Y; e.Z = s.Z; e.T = s.T
+	e.X = s.X
+	e.Y = s.Y
+	e.Z = s.Z
+	e.T = s.T
 	e.LastX = s.Last
 	e.Mem = s.Mem
-	e.FinN = s.FinN; e.FinI = s.FinI; e.FinPV = s.FinPV; e.FinPMT = s.FinPMT; e.FinFV = s.FinFV
-	e.FinCF0 = s.FinCF0; e.FinCFj = s.FinCFj; e.FinNj = s.FinNj; e.FinCfCnt = s.FinCfCnt
-	e.AmortN = s.AmortN; e.AmortInt = s.AmortInt; e.AmortPrin = s.AmortPrin
-	e.Flags.Begin = s.Begin; e.Flags.Dmy = s.Dmy; e.Flags.Angle = s.Angle
+	e.FinN = s.FinN
+	e.FinI = s.FinI
+	e.FinPV = s.FinPV
+	e.FinPMT = s.FinPMT
+	e.FinFV = s.FinFV
+	e.FinCF0 = s.FinCF0
+	e.FinCFj = s.FinCFj
+	e.FinNj = s.FinNj
+	e.FinCfCnt = s.FinCfCnt
+	e.AmortN = s.AmortN
+	e.AmortInt = s.AmortInt
+	e.AmortPrin = s.AmortPrin
+	e.Flags.Begin = s.Begin
+	e.Flags.Dmy = s.Dmy
+	e.Flags.Angle = s.Angle
 }
 
 func (s EngineState) Marshal() ([]byte, error) {

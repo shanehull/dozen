@@ -80,12 +80,12 @@ func (e *Engine) Recall(idx int) {
 
 func (e *Engine) RollDown() {
 	e.LastX = e.X
-	e.Stack.rollDown()
+	e.rollDown()
 }
 
 func (e *Engine) RollUp() {
 	e.LastX = e.X
-	e.Stack.rollUp()
+	e.rollUp()
 }
 
 func (e *Engine) YPowX() {
