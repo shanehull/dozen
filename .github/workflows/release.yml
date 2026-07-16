@@ -76,6 +76,8 @@ jobs:
           name="dozen_${{ matrix.platform }}"
           mkdir "$name"
           if [ "${{ runner.os }}" = "macOS" ]; then
+            qlmanage -t -s 1024 -o . build/appicon.svg
+            mv appicon.svg.png build/appicon.png
             mkdir -p "$name/Dozen.app/Contents/MacOS"
             mkdir -p "$name/Dozen.app/Contents/Resources"
             cp Dozen "$name/Dozen.app/Contents/MacOS/Dozen"
