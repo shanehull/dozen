@@ -53,6 +53,14 @@ PV(rate, n, pmt, fv float64, when Timing) float64
 PMT(rate, n, pv, fv float64, when Timing) float64
 NPer(rate, pmt, pv, fv float64, when Timing) (float64, error)
 Rate(n, pmt, pv, fv float64, when Timing) (float64, error)
+SolveTVM(n, i, pv, pmt, fv float64, when Timing) (float64, error)
+```
+
+`SolveTVM` is the unified solver — pass `math.NaN()` for exactly one variable.
+
+```go
+i, _ := engine.SolveTVM(360, math.NaN(), 300000, -1798.65, 0, engine.End)
+fmt.Printf("%.4f%%\n", i*12*100) // 6.00% APR
 ```
 
 ### Cash flows
