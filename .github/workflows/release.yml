@@ -54,10 +54,7 @@ jobs:
         with:
           node-version: 22
       - if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update || sudo apt-get update
-          sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev || \
-            sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
+        run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
       - run: |
           cd frontend
           npm ci
