@@ -2,6 +2,11 @@ name: CI
 
 on:
   pull_request:
+    paths:
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+      - "frontend/**"
 
 permissions:
   contents: read
@@ -33,6 +38,11 @@ jobs:
         with:
           go-version-file: go.mod
       - run: mkdir -p frontend/dist && touch frontend/dist/index.html
+      - uses: actions/cache@v6
+        with:
+          path: /var/cache/apt/archives
+          key: apt-gtk-webkit-${{ runner.os }}-${{ runner.arch }}
+          restore-keys: apt-gtk-webkit-
       - run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
       - uses: golangci/golangci-lint-action@v9
         with:
@@ -47,6 +57,11 @@ jobs:
           go-version-file: go.mod
       - run: gofmt -l . | grep -q . && echo "gofmt required on files:" && gofmt -l . && exit 1 || exit 0
       - run: mkdir -p frontend/dist && touch frontend/dist/index.html
+      - uses: actions/cache@v6
+        with:
+          path: /var/cache/apt/archives
+          key: apt-gtk-webkit-${{ runner.os }}-${{ runner.arch }}
+          restore-keys: apt-gtk-webkit-
       - run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
       - run: go vet ./...
 
@@ -68,5 +83,10 @@ jobs:
         with:
           go-version-file: go.mod
       - run: mkdir -p frontend/dist && touch frontend/dist/index.html
+      - uses: actions/cache@v6
+        with:
+          path: /var/cache/apt/archives
+          key: apt-gtk-webkit-${{ runner.os }}-${{ runner.arch }}
+          restore-keys: apt-gtk-webkit-
       - run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
       - run: go test -v -run "TestUI" -count=1 .

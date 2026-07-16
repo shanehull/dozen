@@ -54,6 +54,12 @@ jobs:
         with:
           node-version: 22
       - if: runner.os == 'Linux'
+        uses: actions/cache@v6
+        with:
+          path: /var/cache/apt/archives
+          key: apt-gtk-webkit-${{ runner.os }}-${{ runner.arch }}
+          restore-keys: apt-gtk-webkit-
+      - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libgtk-4-dev libwebkitgtk-6.0-dev
       - run: |
           cd frontend
