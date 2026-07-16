@@ -8,6 +8,7 @@ export {
 };
 
 export {
+    Display,
     KeyInput,
     KeyResult
 } from "./models.js";

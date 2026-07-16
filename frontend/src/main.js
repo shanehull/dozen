@@ -94,10 +94,9 @@ const ANNUN = ["f", "g", "BEGIN", "RAD", "D.MY", "PRGM"];
 
 function applyState(s) {
   const d = (s && s.display) || {};
-  const sign = d.Sign && d.Sign.trim() ? d.Sign : "";
-  signEl.textContent = sign;
-  digitsEl.textContent = d.Mantissa && d.Mantissa.trim() ? d.Mantissa.trim() : "0.00";
-  const flags = (d.Flags || []).map(f => String(f).toUpperCase());
+  const sign = d.sign && d.sign.trim() ? d.sign : "";
+  digitsEl.textContent = d.mantissa && d.mantissa.trim() ? d.mantissa.trim() : "0.00";
+  const flags = (d.flags || []).map(f => String(f).toUpperCase());
   annunEl.innerHTML = ANNUN.map(a => {
     const on = flags.includes(a.toUpperCase());
     return `<span class="${on ? "on" : ""}">${a}</span>`;
@@ -292,5 +291,5 @@ if (saved) {
   CalcService.Load(saved).then(() => CalcService.GetState().then(applyState));
 } else {
   CalcService.GetState().then(applyState).catch(() =>
-    applyState({ display: { Mantissa: "0.00", Sign: "", Flags: [] } }));
+    applyState({ display: { mantissa: "0.00", sign: "", flags: [] } }));
 }

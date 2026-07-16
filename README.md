@@ -6,11 +6,12 @@
 [![CI](https://github.com/shanehull/dozen/actions/workflows/ci.yml/badge.svg)](https://github.com/shanehull/dozen/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+![Dozen calculator](docs/screenshot.png)
+
 Two things in one repo:
 
 - **`engine`** — a generic RPN calculator library: stack, registers, TVM, cash
-  flows, statistics, depreciation, date math, and a `Step` dispatcher for
-  keystroke-driven use. No GUI dependency.
+  flows, statistics, depreciation, date math. No GUI dependency.
 - **App** — a cross-platform financial calculator built with
   [Wails v3](https://v3.wails.io) on top of the engine. macOS, Windows, Linux,
   iOS, Android.
@@ -73,53 +74,63 @@ DepDB(cost, salvage, life, period, factorPct float64) (dep, remaining float64)
 
 ## Engine
 
-`Engine` is an RPN calculator with a four-register stack, 20 memory registers,
-TVM and cash-flow slots, statistics, and `f`/`g` prefix keys. Everything goes
-through `Step`:
-
-```go
-func New() *Engine
-func (e *Engine) Step(op string, arg float64, argS string)
-func (e *Engine) Format() Display
-func (e *Engine) Snapshot() EngineState
-func (e *Engine) Restore(EngineState)
-```
+`Engine` is an RPN calculator with a four-level stack, 20 memory registers,
+TVM and cash-flow slots, statistics accumulation, and program memory.
 
 ```go
 c := engine.New()
-c.Step("2", 2, "2")
-c.Step("ENTER", 0, "")
-c.Step("3", 3, "3")
-c.Step("+", 0, "+")   // c.X == 5
 
-c.X, c.Y, c.Z, c.T                // stack
-c.FinN, c.FinI, c.FinPV, c.FinPMT, c.FinFV  // TVM registers
-c.FinCF0, c.FinCFj, c.FinNj       // cash-flow registers
-c.Flags.Begin, c.Flags.Dmy        // mode flags
-c.Mem[0]..c.Mem[19]               // 20 general registers
-c.Format()                        // Display{Mantissa, Sign, Flags}
+c.X = 2; c.Enter(); c.X = 3
+c.Add()                    // c.X == 5
+
+c.X = 360; c.SetN()        // FinN = 360
+c.X = 5; c.SetI()          // FinI = 5
+c.X = -1000; c.SetPV()     // FinPV = -1000
+c.SolvePMT()               // c.X == monthly payment
+
+c.X = 4; c.Sqrt()          // c.X == 2
+c.X = 180; c.Sin()         // sine of 180 degrees
+
+c.Snapshot()               // EngineState for persistence
+c.Restore(state)
 ```
 
-Ops recognised by `Step`:
+### Methods
 
-| Op | Args | Notes |
-| --- | --- | --- |
-| `0`–`9`, `.`, `CHS`, `EEX` | digit in arg | entry keys |
-| `ENTER`, `CLx`, `LSTx` | — | stack |
-| `+` `−` `×` `÷` `x↔y` `R↓` `R↑` | — | arithmetic / stack |
-| `n` `i` `PV` `PMT` `FV` | — | store X into register, or solve |
-| `NPV` `IRR` `AMORT` `INT` | — | cash flow / amortization |
-| `PRICE` `YTM` `SL` `SOYD` `DB` | — | bonds / depreciation |
-| `SIN` `COS` `TAN` `LN` `LOG` `yˣ` `√x` `1/x` `n!` `π` | — | scientific |
-| `%` `%CHG` `%T` `INTG` `FRAC` `\|x\|` | — | utility |
-| `Σ+` `x̄` `ŷ` `s` `ŷ,r` | — | statistics |
-| `DYS` `DATE` | — | date |
-| `STO` + digit, `RCL` + digit | index in arg | memory |
-| `FIX` `SCI` `ENG` + digit | digits in arg | g‑prefixed display mode |
-| `CLEAR FIN` `CLEAR REG` `CLEAR Σ` `CLEAR PRGM` | — | f‑prefixed clears |
-| `P/R` `R/S` `GTO` `SST` `BST` | — | program mode |
-| `CF0` `CFj` `Nj` | — | g‑prefixed cash flows |
-| `BEG` `END` `D.MY` `DEG` `RAD` `GRAD` `→H.MS` `→H` `→R` `→P` | — | g‑prefixed modes |
+| Category | Methods |
+| --- | --- |
+| Stack | `Enter`, `Clx`, `Chs`, `XY`, `RollDown`, `RollUp`, `LastXRecall` |
+| Arithmetic | `Add`, `Sub`, `Mul`, `Div`, `YPowX` |
+| TVM store | `SetN`, `SetI`, `SetPV`, `SetPMT`, `SetFV` |
+| TVM solve | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV` |
+| Cash flow | `ComputeNPV`, `ComputeIRR` |
+| Amortization | `Amortize` |
+| Bonds | `BondPrice`, `BondYield` |
+| Depreciation | `DepreciationSL`, `DepreciationSOYD`, `DepreciationDB` |
+| Statistics | `StatAdd`, `MeanX`, `MeanY`, `SDev`, `WeightedMean`, `LinEst`, `ClearStats` |
+| Scientific | `Sin`, `Cos`, `Tan`, `Ln`, `Log`, `Sqrt`, `Sqr`, `Recip`, `Pi`, `Fact` |
+| Trig helpers | `ToRad`, `ToDeg`, `ToRect`, `ToPolar`, `ToHMS`, `ToH` |
+| Percent | `Pct`, `PctChg`, `PctTotal` |
+| Utility | `Abs`, `Intg`, `Frac`, `Exp`, `Exp10` |
+| Date | `DaysBetween`, `DateAdd` |
+| Memory | `Store(n)`, `Recall(n)` |
+| State | `Snapshot`, `Restore` |
+| Clear | `ClearFin`, `ClearReg`, `ClearStats`, `ClearPgm` |
+
+### Fields
+
+```go
+c.X, c.Y, c.Z, c.T                // stack registers
+c.LastX                            // last X before operation
+c.Mem[0]..c.Mem[19]                // 20 general registers
+c.FinN, c.FinI, c.FinPV, c.FinPMT, c.FinFV  // TVM registers
+c.FinCF0, c.FinCFj, c.FinNj, c.FinCfCnt     // cash-flow registers
+c.AmortN, c.AmortInt, c.AmortPrin           // amortization results
+c.Flags.Begin, c.Flags.Dmy, c.Flags.Angle   // calculator mode
+c.Flags.StackLift                             // stack lift flag
+c.Program, c.PgmLen, c.PgmPC                 // program storage
+```
+
 
 ## Examples
 
