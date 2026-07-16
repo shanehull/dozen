@@ -2,7 +2,7 @@ package engine
 
 import "math"
 
-func (e *Engine) statAdd() {
+func (e *Engine) StatAdd() {
 	y := e.X
 	x := e.Y
 	e.StatsN++
@@ -13,13 +13,12 @@ func (e *Engine) statAdd() {
 	e.StatsSxy += x * y
 	e.StatsLx = x
 	e.StatsLy = y
-	// Weighted mean accumulates separately
 	e.StatsWx += 1
 	e.StatsWxx += x
 	e.tuck()
 }
 
-func (e *Engine) statMeanX() {
+func (e *Engine) MeanX() {
 	if e.StatsN == 0 {
 		e.X = math.NaN()
 		return
@@ -27,7 +26,7 @@ func (e *Engine) statMeanX() {
 	e.result(e.StatsSx / float64(e.StatsN))
 }
 
-func (e *Engine) statMeanY() {
+func (e *Engine) MeanY() {
 	if e.StatsN == 0 {
 		e.X = math.NaN()
 		return
@@ -35,7 +34,7 @@ func (e *Engine) statMeanY() {
 	e.result(e.StatsSy / float64(e.StatsN))
 }
 
-func (e *Engine) statMeanW() {
+func (e *Engine) WeightedMean() {
 	if e.StatsWx == 0 {
 		e.X = math.NaN()
 		return
@@ -43,7 +42,7 @@ func (e *Engine) statMeanW() {
 	e.result(e.StatsWxx / e.StatsWx)
 }
 
-func (e *Engine) statSDev() {
+func (e *Engine) SDev() {
 	if e.StatsN < 2 {
 		e.X = math.NaN()
 		return
@@ -56,7 +55,7 @@ func (e *Engine) statSDev() {
 	e.result(math.Sqrt(v))
 }
 
-func (e *Engine) statLinEst() {
+func (e *Engine) LinEst() {
 	if e.StatsN < 2 {
 		e.X = math.NaN()
 		return
@@ -85,7 +84,7 @@ func (e *Engine) statLinEst() {
 	e.Flags.StackLift = true
 }
 
-func (e *Engine) clearStats() {
+func (e *Engine) ClearStats() {
 	e.StatsN = 0
 	e.StatsSx = 0
 	e.StatsSy = 0
@@ -98,7 +97,7 @@ func (e *Engine) clearStats() {
 	e.StatsWxx = 0
 }
 
-func (e *Engine) clearFin() {
+func (e *Engine) ClearFin() {
 	e.FinN = 0
 	e.FinI = 0
 	e.FinPV = 0
@@ -112,72 +111,35 @@ func (e *Engine) clearFin() {
 	e.Flags.StackLift = false
 }
 
-func (e *Engine) clearReg() {
+func (e *Engine) ClearReg() {
 	for i := range e.Mem {
 		e.Mem[i] = 0
 	}
-	e.clearStats()
-	e.clearFin()
+	e.ClearStats()
+	e.ClearFin()
 	e.Flags.StackLift = true
 }
 
-func (e *Engine) clearPgm() {
+func (e *Engine) ClearPgm() {
 	e.Program = [200]Instruction{}
 	e.PgmLen = 0
 	e.PgmPC = 0
 }
 
-func (e *Engine) clearPrefix() {
-	e.Flags.Prefix = ""
-}
-
-func (e *Engine) cmpLE() {
-	e.LastX = e.X
-	if e.X <= e.Y {
-		e.PgmPC++
-	}
-	e.tuck()
-	e.Flags.StackLift = true
-}
-
-func (e *Engine) cmpEQ() {
-	e.LastX = e.X
-	if isZero(e.X) {
-		e.PgmPC++
-	}
-	e.tuck()
-	e.Flags.StackLift = true
-}
-
-func (e *Engine) sst() {
+func (e *Engine) SST() {
 	if e.PgmPC < e.PgmLen {
 		e.PgmPC++
 	}
 }
 
-func (e *Engine) bst() {
+func (e *Engine) BST() {
 	if e.PgmPC > 0 {
 		e.PgmPC--
 	}
 }
 
-func (e *Engine) gto(line int) {
+func (e *Engine) Goto(line int) {
 	if line >= 0 && line < e.PgmLen {
 		e.PgmPC = line
 	}
-}
-
-func (e *Engine) runStop() {
-	if e.Flags.Running {
-		e.Flags.Running = false
-		return
-	}
-	e.Flags.Running = true
-	e.PgmPC = 0
-	for e.Flags.Running && e.PgmPC < e.PgmLen {
-		inst := e.Program[e.PgmPC]
-		e.PgmPC++
-		e.Step(inst.Op, inst.Arg, inst.ArgS)
-	}
-	e.Flags.Running = false
 }

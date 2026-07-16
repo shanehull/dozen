@@ -6,9 +6,58 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: Unused imports
-import * as engine$0 from "./engine/models.js";
+export class Display {
+    /**
+     * Creates a new Display instance.
+     * @param {Partial<Display>} [$$source = {}] - The source object to create the Display.
+     */
+    constructor($$source = {}) {
+        if (!("mantissa" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["mantissa"] = "";
+        }
+        if (!("exponent" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["exponent"] = "";
+        }
+        if (!("sign" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["sign"] = "";
+        }
+        if (!("flags" in $$source)) {
+            /**
+             * @member
+             * @type {string[]}
+             */
+            this["flags"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Display instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {Display}
+     */
+    static createFrom($$source = {}) {
+        const $$createField3_0 = $$createType0;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("flags" in $$parsedSource) {
+            $$parsedSource["flags"] = $$createField3_0($$parsedSource["flags"]);
+        }
+        return new Display(/** @type {Partial<Display>} */($$parsedSource));
+    }
+}
 
 export class KeyInput {
     /**
@@ -61,9 +110,9 @@ export class KeyResult {
         if (!("display" in $$source)) {
             /**
              * @member
-             * @type {engine$0.Display}
+             * @type {Display}
              */
-            this["display"] = (new engine$0.Display());
+            this["display"] = (new Display());
         }
         if (!("stackX" in $$source)) {
             /**
@@ -117,8 +166,8 @@ export class KeyResult {
      * @returns {KeyResult}
      */
     static createFrom($$source = {}) {
-        const $$createField0_0 = $$createType0;
-        const $$createField6_0 = $$createType1;
+        const $$createField0_0 = $$createType1;
+        const $$createField6_0 = $$createType0;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("display" in $$parsedSource) {
             $$parsedSource["display"] = $$createField0_0($$parsedSource["display"]);
@@ -131,5 +180,5 @@ export class KeyResult {
 }
 
 // Private type creation functions
-const $$createType0 = engine$0.Display.createFrom;
-const $$createType1 = $Create.Array($Create.Any);
+const $$createType0 = $Create.Array($Create.Any);
+const $$createType1 = Display.createFrom;

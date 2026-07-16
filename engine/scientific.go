@@ -2,42 +2,42 @@ package engine
 
 import "math"
 
-func (e *Engine) sin() {
+func (e *Engine) Sin() {
 	e.X = clamp(math.Sin(e.angleInRads()))
 }
 
-func (e *Engine) cos() {
+func (e *Engine) Cos() {
 	e.X = clamp(math.Cos(e.angleInRads()))
 }
 
-func (e *Engine) tan() {
+func (e *Engine) Tan() {
 	e.X = clamp(math.Tan(e.angleInRads()))
 }
 
-func (e *Engine) asin() {
+func (e *Engine) Asin() {
 	e.X = clamp(math.Asin(e.X))
 	e.toCurAngle()
 }
 
-func (e *Engine) acos() {
+func (e *Engine) Acos() {
 	e.X = clamp(math.Acos(e.X))
 	e.toCurAngle()
 }
 
-func (e *Engine) atan() {
+func (e *Engine) Atan() {
 	e.X = clamp(math.Atan(e.X))
 	e.toCurAngle()
 }
 
-func (e *Engine) toRad() {
+func (e *Engine) ToRad() {
 	e.X = clamp(e.X * math.Pi / 180)
 }
 
-func (e *Engine) toDeg() {
+func (e *Engine) ToDeg() {
 	e.X = clamp(e.X * 180 / math.Pi)
 }
 
-func (e *Engine) toH() {
+func (e *Engine) ToH() {
 	d := e.X
 	sign := 1.0
 	if d < 0 {
@@ -51,7 +51,7 @@ func (e *Engine) toH() {
 	e.X = sign * (float64(deg) + float64(min)/60 + float64(sec)/3600)
 }
 
-func (e *Engine) toHMS() {
+func (e *Engine) ToHMS() {
 	d := e.X
 	sign := 1.0
 	if d < 0 {
@@ -65,7 +65,7 @@ func (e *Engine) toHMS() {
 	e.X = sign * (deg + min/100 + sec/10000)
 }
 
-func (e *Engine) toRect() {
+func (e *Engine) ToRect() {
 	r := e.X
 	theta := e.Y
 	e.LastX = r
@@ -73,7 +73,7 @@ func (e *Engine) toRect() {
 	e.Y = clamp(r * math.Sin(theta))
 }
 
-func (e *Engine) toPolar() {
+func (e *Engine) ToPolar() {
 	x := e.X
 	y := e.Y
 	e.LastX = x
@@ -83,27 +83,27 @@ func (e *Engine) toPolar() {
 	e.Y = clamp(theta)
 }
 
-func (e *Engine) pi() {
+func (e *Engine) Pi() {
 	e.result(math.Pi)
 }
 
-func (e *Engine) ln() {
+func (e *Engine) Ln() {
 	e.X = clamp(math.Log(e.X))
 }
 
-func (e *Engine) log() {
+func (e *Engine) Log() {
 	e.X = clamp(math.Log10(e.X))
 }
 
-func (e *Engine) exp() {
+func (e *Engine) Exp() {
 	e.X = clamp(math.Exp(e.X))
 }
 
-func (e *Engine) exp10() {
+func (e *Engine) Exp10() {
 	e.X = clamp(math.Pow(10, e.X))
 }
 
-func (e *Engine) recip() {
+func (e *Engine) Recip() {
 	if isZero(e.X) {
 		e.X = math.Inf(1)
 	} else {
@@ -111,7 +111,7 @@ func (e *Engine) recip() {
 	}
 }
 
-func (e *Engine) sqrt() {
+func (e *Engine) Sqrt() {
 	if e.X < 0 {
 		e.X = math.NaN()
 	} else {
@@ -119,23 +119,23 @@ func (e *Engine) sqrt() {
 	}
 }
 
-func (e *Engine) sqr() {
+func (e *Engine) Sqr() {
 	e.X = clamp(e.X * e.X)
 }
 
-func (e *Engine) abs() {
+func (e *Engine) Abs() {
 	e.X = math.Abs(e.X)
 }
 
-func (e *Engine) intg() {
+func (e *Engine) Intg() {
 	e.X = math.Trunc(e.X)
 }
 
-func (e *Engine) frac() {
+func (e *Engine) Frac() {
 	e.X = e.X - math.Trunc(e.X)
 }
 
-func (e *Engine) fact() {
+func (e *Engine) Fact() {
 	if e.X < 0 || e.X != math.Trunc(e.X) {
 		e.X = math.NaN()
 		return
@@ -152,12 +152,12 @@ func (e *Engine) fact() {
 	e.X = clamp(result)
 }
 
-func (e *Engine) pct() {
+func (e *Engine) Pct() {
 	e.LastX = e.X
 	e.X = clamp(e.Y * e.X / 100)
 }
 
-func (e *Engine) pctChg() {
+func (e *Engine) PctChg() {
 	e.LastX = e.X
 	if isZero(e.Y) {
 		e.X = math.NaN()
@@ -168,7 +168,7 @@ func (e *Engine) pctChg() {
 	e.Flags.StackLift = true
 }
 
-func (e *Engine) pctTotal() {
+func (e *Engine) PctTotal() {
 	e.LastX = e.X
 	e.X = clamp(e.X / e.Y * 100)
 }

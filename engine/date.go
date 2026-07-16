@@ -2,7 +2,7 @@ package engine
 
 import "math"
 
-func (e *Engine) dateDys() {
+func (e *Engine) DaysBetween() {
 	d1 := e.Y
 	d2 := e.X
 	var dp1, dp2 dateParts
@@ -20,7 +20,7 @@ func (e *Engine) dateDys() {
 	e.T = 0
 }
 
-func (e *Engine) dateDate() {
+func (e *Engine) DateAdd() {
 	date := e.Y
 	days := int(e.X)
 	var d dateParts
