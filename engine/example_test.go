@@ -45,7 +45,7 @@ func Example_npv() {
 	c.FinCfCnt = 4
 	c.X = 10
 	c.Flags.StackLift = true
-	c.ComputeNPV()
+	c.NPV()
 
 	fmt.Printf("NPV: $%.2f\n", c.X)
 	// Output: NPV: $38877.13
@@ -60,7 +60,7 @@ func Example_irr() {
 	c.FinCFj[2] = 30000
 	c.FinCfCnt = 3
 	c.Flags.StackLift = true
-	c.ComputeIRR()
+	c.IRR()
 
 	fmt.Printf("IRR: %.2f%%\n", c.X)
 	// Output: IRR: 10.13%
@@ -174,7 +174,7 @@ func TestExamples(t *testing.T) {
 		c.FinCfCnt = 4
 		c.X = 10
 		c.Flags.StackLift = true
-		c.ComputeNPV()
+		c.NPV()
 		if math.Abs(c.X-38877.13) > 1 {
 			t.Fatalf("NPV: want ~38877, got %v", c.X)
 		}
@@ -188,7 +188,7 @@ func TestExamples(t *testing.T) {
 		c.FinCFj[2] = 30000
 		c.FinCfCnt = 3
 		c.Flags.StackLift = true
-		c.ComputeIRR()
+		c.IRR()
 		if math.Abs(c.X-10.13) > 0.5 {
 			t.Fatalf("IRR: want ~10.13, got %v", c.X)
 		}
