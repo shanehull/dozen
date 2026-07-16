@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/shanehull/dozen/compare/v0.3.0...v0.4.0) (2026-07-16)
+
+
+### Features
+
+* add SolveTVM, rename ComputeNPV/IRR to NPV/IRR ([#11](https://github.com/shanehull/dozen/issues/11)) ([e277c47](https://github.com/shanehull/dozen/commit/e277c4786556a15336d5caa728ecdf989f82d2cb))
+
 ## [0.3.0](https://github.com/shanehull/dozen/compare/v0.2.0...v0.3.0) (2026-07-16)
 
 
