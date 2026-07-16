@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/shanehull/dozen/compare/v0.2.0...v0.3.0) (2026-07-16)
+
+
+### Features
+
+* add SolveTVM to library API, delegate engine to it ([#10](https://github.com/shanehull/dozen/issues/10)) ([a8b0441](https://github.com/shanehull/dozen/commit/a8b0441b82d9435e955420999760f24a3eaedc81))
+
+
+### Bug Fixes
+
+* tighten spacing between ENTER and LSTx label ([#8](https://github.com/shanehull/dozen/issues/8)) ([3cf13ca](https://github.com/shanehull/dozen/commit/3cf13cae2a31e40c2dc0dcf1ead28b3ca4e971b6))
+
 ## [0.2.0](https://github.com/shanehull/dozen/compare/v0.1.0...v0.2.0) (2026-07-16)
 
 
