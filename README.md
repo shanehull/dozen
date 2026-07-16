@@ -97,25 +97,26 @@ c.Restore(state)
 
 ### Methods
 
-| Category | Methods |
-| --- | --- |
-| Stack | `Enter`, `Clx`, `Chs`, `XY`, `RollDown`, `RollUp`, `LastXRecall` |
-| Arithmetic | `Add`, `Sub`, `Mul`, `Div`, `YPowX` |
-| TVM store | `SetN`, `SetI`, `SetPV`, `SetPMT`, `SetFV` |
-| TVM solve | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV` |
-| Cash flow | `ComputeNPV`, `ComputeIRR` |
-| Amortization | `Amortize` |
-| Bonds | `BondPrice`, `BondYield` |
-| Depreciation | `DepreciationSL`, `DepreciationSOYD`, `DepreciationDB` |
-| Statistics | `StatAdd`, `MeanX`, `MeanY`, `SDev`, `WeightedMean`, `LinEst`, `ClearStats` |
-| Scientific | `Sin`, `Cos`, `Tan`, `Ln`, `Log`, `Sqrt`, `Sqr`, `Recip`, `Pi`, `Fact` |
-| Trig helpers | `ToRad`, `ToDeg`, `ToRect`, `ToPolar`, `ToHMS`, `ToH` |
-| Percent | `Pct`, `PctChg`, `PctTotal` |
-| Utility | `Abs`, `Intg`, `Frac`, `Exp`, `Exp10` |
-| Date | `DaysBetween`, `DateAdd` |
-| Memory | `Store(n)`, `Recall(n)` |
-| State | `Snapshot`, `Restore` |
-| Clear | `ClearFin`, `ClearReg`, `ClearStats`, `ClearPgm` |
+| Category     | Methods                                                                                        |
+| ------------ | ---------------------------------------------------------------------------------------------- |
+| Stack        | `Enter`, `Clx`, `Chs`, `XY`, `RollDown`, `RollUp`, `LastXRecall`                               |
+| Arithmetic   | `Add`, `Sub`, `Mul`, `Div`, `YPowX`                                                            |
+| TVM store    | `SetN`, `SetI`, `SetPV`, `SetPMT`, `SetFV`                                                     |
+| TVM solve    | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV`                                           |
+| Cash flow    | `ComputeNPV`, `ComputeIRR`                                                                     |
+| Amortization | `Amortize`                                                                                     |
+| Bonds        | `BondPrice`, `BondYield`                                                                       |
+| Depreciation | `DepreciationSL`, `DepreciationSOYD`, `DepreciationDB`                                         |
+| Statistics   | `StatAdd`, `MeanX`, `MeanY`, `SDev`, `WeightedMean`, `LinEst`, `ClearStats`                    |
+| Scientific   | `Sin`, `Cos`, `Tan`, `Asin`, `Acos`, `Atan`, `Ln`, `Log`, `Sqrt`, `Sqr`, `Recip`, `Pi`, `Fact` |
+| Trig helpers | `ToRad`, `ToDeg`, `ToRect`, `ToPolar`, `ToHMS`, `ToH`                                          |
+| Percent      | `Pct`, `PctChg`, `PctTotal`                                                                    |
+| Utility      | `Abs`, `Intg`, `Frac`, `Exp`, `Exp10`                                                          |
+| Date         | `DaysBetween`, `DateAdd`                                                                       |
+| Memory       | `Store(n)`, `Recall(n)`                                                                        |
+| Program      | `SST`, `BST`, `Goto(line)`                                                                     |
+| State        | `Snapshot`, `Restore`                                                                          |
+| Clear        | `ClearFin`, `ClearReg`, `ClearStats`, `ClearPgm`                                               |
 
 ### Fields
 
@@ -130,7 +131,6 @@ c.Flags.Begin, c.Flags.Dmy, c.Flags.Angle   // calculator mode
 c.Flags.StackLift                             // stack lift flag
 c.Program, c.PgmLen, c.PgmPC                 // program storage
 ```
-
 
 ## Examples
 
@@ -155,18 +155,18 @@ wails3 dev
 
 ## Keyboard
 
-| Key | Action |
-| --- | --- |
-| `0`–`9`, `.` | digits |
-| `+` `-` `*` `/` | `+` `−` `×` `÷` |
-| `Enter` | `ENTER` |
-| `Esc` / `Backspace` | `CLx` |
-| `%` | `%` |
-| `f` / `g` | arm gold / blue shift |
+| Key                 | Action                  |
+| ------------------- | ----------------------- |
+| `0`–`9`, `.`        | digits                  |
+| `+` `-` `*` `/`     | `+` `−` `×` `÷`         |
+| `Enter`             | `ENTER`                 |
+| `Esc` / `Backspace` | `CLx`                   |
+| `%`                 | `%`                     |
+| `f` / `g`           | arm gold / blue shift   |
 | `n` `i` `p` `m` `v` | `n` `i` `PV` `PMT` `FV` |
-| `s` | `STO` prefix |
-| `r` | `RCL` prefix |
-| `x` | `x↔y` |
+| `s`                 | `STO` prefix            |
+| `r`                 | `RCL` prefix            |
+| `x`                 | `x↔y`                   |
 
 ---
 
