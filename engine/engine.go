@@ -7,7 +7,7 @@ const MaxDigits = 10
 type AngleMode int
 
 const (
-	Deg  AngleMode = iota
+	Deg AngleMode = iota
 	Rad
 	Grad
 )
@@ -17,10 +17,10 @@ type Engine struct {
 	Mem   [20]float64
 
 	StatsN, StatsSx, StatsSy, StatsSxx, StatsSyy, StatsSxy float64
-	StatsLx, StatsLy, StatsWx, StatsWxx                     float64
+	StatsLx, StatsLy, StatsWx, StatsWxx                    float64
 
-	PgmLen int
-	PgmPC  int
+	PgmLen  int
+	PgmPC   int
 	Program [200]Instruction
 
 	Flags Flags
@@ -48,11 +48,11 @@ func New() *Engine {
 }
 
 func (e *Engine) Push() {
-	e.Stack.push()
+	e.push()
 }
 
 func (e *Engine) Tuck() {
-	e.Stack.tuck()
+	e.tuck()
 }
 
 func isZero(f float64) bool {

@@ -1,7 +1,9 @@
 package engine
 
-import "testing"
-import "math"
+import (
+	"math"
+	"testing"
+)
 
 func TestRegressFV_NoDup(t *testing.T) {
 	e := New()

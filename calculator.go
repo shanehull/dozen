@@ -32,12 +32,12 @@ type CalcService struct {
 }
 
 type KeyResult struct {
-	Display Display `json:"display"`
-	StackX  float64 `json:"stackX"`
-	StackY  float64 `json:"stackY"`
-	StackZ  float64 `json:"stackZ"`
-	StackT  float64 `json:"stackT"`
-	LastX   float64 `json:"lastX"`
+	Display Display  `json:"display"`
+	StackX  float64  `json:"stackX"`
+	StackY  float64  `json:"stackY"`
+	StackZ  float64  `json:"stackZ"`
+	StackT  float64  `json:"stackT"`
+	LastX   float64  `json:"lastX"`
 	Flags   []string `json:"flags"`
 }
 
@@ -52,12 +52,6 @@ func NewCalcService() *CalcService {
 }
 
 // ---- key dispatch ----------------------------------------------------------
-
-var entryKeys = map[string]bool{
-	"0": true, "1": true, "2": true, "3": true, "4": true,
-	"5": true, "6": true, "7": true, "8": true, "9": true,
-	".": true, "CHS": true, "EEX": true,
-}
 
 var tvms = map[string]bool{
 	"n": true, "i": true, "PV": true, "PMT": true, "FV": true,
@@ -163,22 +157,32 @@ func (c *CalcService) PressKey(input KeyInput) KeyResult {
 
 func (c *CalcService) storeTVM(op string) {
 	switch op {
-	case "n": c.e.SetN()
-	case "i": c.e.SetI()
-	case "PV": c.e.SetPV()
-	case "PMT": c.e.SetPMT()
-	case "FV": c.e.SetFV()
+	case "n":
+		c.e.SetN()
+	case "i":
+		c.e.SetI()
+	case "PV":
+		c.e.SetPV()
+	case "PMT":
+		c.e.SetPMT()
+	case "FV":
+		c.e.SetFV()
 	}
 	c.e.Flags.StackLift = false
 }
 
 func (c *CalcService) solveTVM(op string) {
 	switch op {
-	case "n": c.e.SolveN()
-	case "i": c.e.SolveI()
-	case "PV": c.e.SolvePV()
-	case "PMT": c.e.SolvePMT()
-	case "FV": c.e.SolveFV()
+	case "n":
+		c.e.SolveN()
+	case "i":
+		c.e.SolveI()
+	case "PV":
+		c.e.SolvePV()
+	case "PMT":
+		c.e.SolvePMT()
+	case "FV":
+		c.e.SolveFV()
 	}
 }
 
@@ -504,17 +508,27 @@ func (c *CalcService) enterDigit(d int) {
 
 func (c *CalcService) enterDecimal() {
 	if !c.hasEntry {
-		if c.e.Flags.StackLift { c.e.Push(); c.e.Flags.StackLift = false }
+		if c.e.Flags.StackLift {
+			c.e.Push()
+			c.e.Flags.StackLift = false
+		}
 		c.buf = "0"
 		c.hasEntry = true
 	}
-	if !c.hasDot { c.hasDot = true; c.buf += "." }
+	if !c.hasDot {
+		c.hasDot = true
+		c.buf += "."
+	}
 	c.e.X = c.parseBuf()
 }
 
 func (c *CalcService) enterChs() {
 	if c.hasEntry {
-		if strings.HasPrefix(c.buf, "-") { c.buf = c.buf[1:] } else { c.buf = "-" + c.buf }
+		if strings.HasPrefix(c.buf, "-") {
+			c.buf = c.buf[1:]
+		} else {
+			c.buf = "-" + c.buf
+		}
 		c.hasSign = !c.hasSign
 		c.e.X = c.parseBuf()
 	} else {
@@ -524,7 +538,10 @@ func (c *CalcService) enterChs() {
 
 func (c *CalcService) enterEex() {
 	if !c.hasEntry {
-		if c.e.Flags.StackLift { c.e.Push(); c.e.Flags.StackLift = false }
+		if c.e.Flags.StackLift {
+			c.e.Push()
+			c.e.Flags.StackLift = false
+		}
 		c.buf = "1"
 		c.hasEntry = true
 	}
@@ -550,10 +567,16 @@ func (c *CalcService) clearEntry() {
 
 func (c *CalcService) parseBuf() float64 {
 	s := c.buf
-	if c.inExp && c.expBuf != "" { s += "e" + c.expBuf }
-	if s == "" || s == "-" || s == "." || s == "-." { return 0 }
+	if c.inExp && c.expBuf != "" {
+		s += "e" + c.expBuf
+	}
+	if s == "" || s == "-" || s == "." || s == "-." {
+		return 0
+	}
 	v, err := strconv.ParseFloat(s, 64)
-	if err != nil { return 0 }
+	if err != nil {
+		return 0
+	}
 	return v
 }
 
@@ -567,7 +590,9 @@ func (c *CalcService) format() Display {
 
 	if c.hasEntry {
 		d.Mantissa = trimZero(c.buf)
-		if strings.HasPrefix(c.buf, "-") { d.Sign = "-" }
+		if strings.HasPrefix(c.buf, "-") {
+			d.Sign = "-"
+		}
 		d.Flags = c.annunciators()
 		return d
 	}
@@ -583,7 +608,10 @@ func (c *CalcService) format() Display {
 	case x > 9.999999999e99:
 		d.Mantissa = " 9.999999 99"
 	default:
-		if x < 0 { d.Sign = "-"; x = -x }
+		if x < 0 {
+			d.Sign = "-"
+			x = -x
+		}
 		switch dispMode {
 		case 0:
 			d.Mantissa = fmt.Sprintf("%.*f", dispDigits, x)
@@ -598,41 +626,81 @@ func (c *CalcService) format() Display {
 }
 
 func formatSci(x float64, d int) string {
-	if x == 0 { return fmt.Sprintf("%.*f", d, 0.0) + "   00" }
+	if x == 0 {
+		return fmt.Sprintf("%.*f", d, 0.0) + "   00"
+	}
 	e := 0
-	for x >= 10 { x /= 10; e++ }
-	for x < 1 { x *= 10; e-- }
+	for x >= 10 {
+		x /= 10
+		e++
+	}
+	for x < 1 {
+		x *= 10
+		e--
+	}
 	return fmt.Sprintf("%.*f", d, x) + expStr(e)
 }
 
 func formatEng(x float64, d int) string {
-	if x == 0 { return fmt.Sprintf("%.*f", d, 0.0) + "   00" }
+	if x == 0 {
+		return fmt.Sprintf("%.*f", d, 0.0) + "   00"
+	}
 	e := 0
-	for x >= 1000 { x /= 1000; e += 3 }
-	for x < 1 { x *= 1000; e -= 3 }
+	for x >= 1000 {
+		x /= 1000
+		e += 3
+	}
+	for x < 1 {
+		x *= 1000
+		e -= 3
+	}
 	return fmt.Sprintf("%.*f", d, x) + expStr(e)
 }
 
 func expStr(e int) string {
-	if e >= 0 { return fmt.Sprintf("  %02d", e) }
+	if e >= 0 {
+		return fmt.Sprintf("  %02d", e)
+	}
 	return fmt.Sprintf(" -%02d", -e)
 }
 
 func trimZero(s string) string {
-	if len(s) <= 1 || s == "0" { return s }
+	if len(s) <= 1 || s == "0" {
+		return s
+	}
 	i := 0
-	if s[0] == '-' { i = 1 }
-	for i < len(s)-1 && s[i] == '0' && s[i+1] != '.' { i++ }
-	if i > 0 && s[0] == '-' { return "-" + s[i:] }
+	if s[0] == '-' {
+		i = 1
+	}
+	for i < len(s)-1 && s[i] == '0' && s[i+1] != '.' {
+		i++
+	}
+	if i > 0 && s[0] == '-' {
+		return "-" + s[i:]
+	}
 	return s[i:]
 }
 
 func (c *CalcService) annunciators() []string {
 	var a []string
-	if c.armed == "f" { a = append(a, "f") } else if c.armed == "g" { a = append(a, "g") }
-	if c.e.Flags.Begin { a = append(a, "BEGIN") }
-	if c.e.Flags.Dmy { a = append(a, "D.MY") }
-	if c.e.Flags.Angle == engine.Rad { a = append(a, "RAD") } else if c.e.Flags.Angle == engine.Grad { a = append(a, "GRAD") }
+	switch c.armed {
+	case "f":
+		a = append(a, "f")
+	case "g":
+		a = append(a, "g")
+	}
+	if c.e.Flags.Begin {
+		a = append(a, "BEGIN")
+	}
+	if c.e.Flags.Dmy {
+		a = append(a, "D.MY")
+	}
+	switch c.e.Flags.Angle {
+	case engine.Rad:
+		a = append(a, "RAD")
+	case engine.Grad:
+		a = append(a, "GRAD")
+	}
 	return a
 }
 
@@ -647,7 +715,9 @@ func (c *CalcService) Save() string {
 
 func (c *CalcService) Load(j string) {
 	s, err := engine.UnmarshalState([]byte(j))
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 	c.e.Restore(s)
 }
 
@@ -665,6 +735,8 @@ func (c *CalcService) state() KeyResult {
 }
 
 func sz(f float64) float64 {
-	if math.IsNaN(f) || math.IsInf(f, 0) { return 0 }
+	if math.IsNaN(f) || math.IsInf(f, 0) {
+		return 0
+	}
 	return f
 }

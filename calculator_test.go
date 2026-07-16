@@ -99,20 +99,20 @@ func TestUITVMStoreSolve(t *testing.T) {
 	// Now store and solve for FV: i=5, n=10, PV=-1000
 	press(svc, "f", 0)
 	press(svc, "CLEAR FIN", 0)
-	
+
 	press(svc, "1", 1)
 	press(svc, "0", 0)
-	press(svc, "n", 0)          // n=10
+	press(svc, "n", 0) // n=10
 	press(svc, "5", 5)
-	press(svc, "i", 0)          // i=5
+	press(svc, "i", 0) // i=5
 	press(svc, "1", 1)
 	press(svc, "0", 0)
 	press(svc, "0", 0)
 	press(svc, "0", 0)
 	press(svc, "CHS", 0)
-	press(svc, "PV", 0)         // PV=-1000
+	press(svc, "PV", 0) // PV=-1000
 
-	r := press(svc, "FV", 0)    // solve for FV
+	r := press(svc, "FV", 0) // solve for FV
 	if mathAbs(r.StackX-1628.89) > 0.5 {
 		t.Errorf("FV(5%%,10,-1000): stackX = %v, want ~1628.89", r.StackX)
 	}
@@ -220,11 +220,15 @@ func TestUIStackBasics(t *testing.T) {
 	// 5 ENTER 3 + 4 ×
 	for _, d := range []float64{5, 0, 3, 0, 0, 4, 0} {
 		var op string
-		switch {
-		case d == 5: op = "5"
-		case d == 3: op = "3"
-		case d == 4: op = "4"
-		default: op = "ENTER"
+		switch d {
+		case 5:
+			op = "5"
+		case 3:
+			op = "3"
+		case 4:
+			op = "4"
+		default:
+			op = "ENTER"
 		}
 		if op == "ENTER" && d == 0 {
 			press(svc, "ENTER", 0)
@@ -320,8 +324,8 @@ func TestUIDisplayStates(t *testing.T) {
 	r := press(svc, "0", 0)
 	assertDisplay(t, r, "0", "typing 0")
 
-	r = press(svc, "1", 1)
-	r = press(svc, "0", 0)
+	press(svc, "1", 1)
+	press(svc, "0", 0)
 	r = press(svc, "0", 0)
 	assertDisplay(t, r, "100", "typing 100")
 
