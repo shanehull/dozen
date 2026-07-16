@@ -266,7 +266,7 @@ body {
   font-size: 13px;
   font-weight: 700;
 }
-.key.enter .glabel { position: absolute; bottom: 4px; }
+.key.enter .glabel { font-size: 9px; font-weight: 700; color: var(--blue); }
 
 /* group brackets (BOND / DEPRECIATION / CLEAR): a gold line with downward end
    ticks, broken in the middle by a transparent caption. */
