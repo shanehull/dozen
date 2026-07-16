@@ -76,10 +76,26 @@ jobs:
           name="dozen_${{ matrix.platform }}"
           mkdir "$name"
           if [ "${{ runner.os }}" = "macOS" ]; then
+            qlmanage -t -s 1024 -o . build/appicon.svg
+            mv appicon.svg.png build/appicon.png
             mkdir -p "$name/Dozen.app/Contents/MacOS"
+            mkdir -p "$name/Dozen.app/Contents/Resources"
             cp Dozen "$name/Dozen.app/Contents/MacOS/Dozen"
             chmod +x "$name/Dozen.app/Contents/MacOS/Dozen"
             cp build/darwin/Info.plist "$name/Dozen.app/Contents/Info.plist"
+            mkdir -p tmp.iconset
+            sips -z 16 16   build/appicon.png --out tmp.iconset/icon_16x16.png
+            sips -z 32 32   build/appicon.png --out tmp.iconset/icon_16x16@2x.png
+            sips -z 32 32   build/appicon.png --out tmp.iconset/icon_32x32.png
+            sips -z 64 64   build/appicon.png --out tmp.iconset/icon_32x32@2x.png
+            sips -z 128 128 build/appicon.png --out tmp.iconset/icon_128x128.png
+            sips -z 256 256 build/appicon.png --out tmp.iconset/icon_128x128@2x.png
+            sips -z 256 256 build/appicon.png --out tmp.iconset/icon_256x256.png
+            sips -z 512 512 build/appicon.png --out tmp.iconset/icon_256x256@2x.png
+            sips -z 512 512 build/appicon.png --out tmp.iconset/icon_512x512.png
+            iconutil -c icns tmp.iconset
+            cp tmp.icns "$name/Dozen.app/Contents/Resources/icon.icns"
+            rm -rf tmp.iconset tmp.icns
           elif [ -f Dozen.exe ]; then
             cp Dozen.exe "$name/"
           else
