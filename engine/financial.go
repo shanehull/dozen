@@ -99,12 +99,12 @@ func (e *Engine) cashflows() []float64 {
 	return cfs
 }
 
-func (e *Engine) ComputeNPV() {
+func (e *Engine) NPV() {
 	e.X = clamp(NPV(e.X/100, e.cashflows()...))
 	e.Flags.StackLift = true
 }
 
-func (e *Engine) ComputeIRR() {
+func (e *Engine) IRR() {
 	r, _ := IRR(e.cashflows()...)
 	e.result(r * 100)
 }

@@ -31,7 +31,7 @@ func TestRegressNPV_ConsumesRate(t *testing.T) {
 	e.Y = 2
 	e.X = 10
 	e.Flags.StackLift = true
-	e.ComputeNPV()
+	e.NPV()
 	if math.Abs(e.X-47.63) > 0.1 {
 		t.Fatalf("X=%v", e.X)
 	}

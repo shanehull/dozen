@@ -310,7 +310,7 @@ func TestNPVAndIRR(t *testing.T) {
 	e.FinCFj[2] = 70
 	e.FinCfCnt = 3
 	e.X = 10
-	e.ComputeNPV()
+	e.NPV()
 	if math.Abs(e.X-47.63) > 0.1 {
 		t.Fatalf("NPV: want ~47.63, got %v", e.X)
 	}
@@ -320,7 +320,7 @@ func TestNPVAndIRR(t *testing.T) {
 	e.FinCFj[1] = 60
 	e.FinCfCnt = 2
 	e.Flags.StackLift = true
-	e.ComputeIRR()
+	e.IRR()
 	if math.Abs(e.X-13.07) > 0.5 {
 		t.Fatalf("IRR: want ~13.07, got %v", e.X)
 	}
