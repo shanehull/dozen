@@ -92,6 +92,45 @@ func Rate(n, pmt, pv, fv float64, when Timing) (float64, error) {
 	return 0, ErrNoConvergence
 }
 
+// SolveTVM solves for the missing time-value-of-money variable. Pass
+// math.NaN() for exactly one of n, i, pv, pmt, or fv. i is the periodic
+// rate as a fraction (0.05 = 5%). The result is the solved value or an
+// error if the solver fails to converge.
+func SolveTVM(n, i, pv, pmt, fv float64, when Timing) (float64, error) {
+	var missing int
+	if math.IsNaN(n) {
+		missing++
+	}
+	if math.IsNaN(i) {
+		missing++
+	}
+	if math.IsNaN(pv) {
+		missing++
+	}
+	if math.IsNaN(pmt) {
+		missing++
+	}
+	if math.IsNaN(fv) {
+		missing++
+	}
+	if missing != 1 {
+		return 0, ErrNoSolution
+	}
+	switch {
+	case math.IsNaN(n):
+		return NPer(i, pmt, pv, fv, when)
+	case math.IsNaN(i):
+		return Rate(n, pmt, pv, fv, when)
+	case math.IsNaN(pv):
+		return PV(i, n, pmt, fv, when), nil
+	case math.IsNaN(pmt):
+		return PMT(i, n, pv, fv, when), nil
+	case math.IsNaN(fv):
+		return FV(i, n, pv, pmt, when), nil
+	}
+	return 0, ErrNoSolution
+}
+
 // NPV returns the net present value of a cash-flow stream discounted at rate
 // (a fraction). cashflows[0] is the period-0 flow (typically the initial
 // outlay); cashflows[k] occurs at the end of period k.

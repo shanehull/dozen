@@ -8,45 +8,33 @@ func (e *Engine) SetPV()  { e.FinPV = e.X }
 func (e *Engine) SetPMT() { e.FinPMT = e.X }
 func (e *Engine) SetFV()  { e.FinFV = e.X }
 
-func (e *Engine) SolveN() {
-	n, err := NPer(e.FinI/100, e.FinPMT, e.FinPV, e.FinFV, Timing(e.Flags.Begin))
-	if err != nil {
-		e.X = math.NaN()
-		return
-	}
-	e.Push()
-	e.X = clamp(n)
-	e.Flags.StackLift = true
-}
-
+func (e *Engine) SolveN() { e.solve(NaNf64(), e.FinI/100, e.FinPV, e.FinPMT, e.FinFV) }
 func (e *Engine) SolveI() {
-	r, err := Rate(e.FinN, e.FinPMT, e.FinPV, e.FinFV, Timing(e.Flags.Begin))
+	v, err := SolveTVM(e.FinN, NaNf64(), e.FinPV, e.FinPMT, e.FinFV, Timing(e.Flags.Begin))
 	if err != nil {
 		e.X = math.NaN()
 		return
 	}
 	e.Push()
-	e.X = clamp(r * 100)
+	e.X = clamp(v * 100)
+	e.Flags.StackLift = true
+}
+func (e *Engine) SolvePV()  { e.solve(e.FinN, e.FinI/100, NaNf64(), e.FinPMT, e.FinFV) }
+func (e *Engine) SolvePMT() { e.solve(e.FinN, e.FinI/100, e.FinPV, NaNf64(), e.FinFV) }
+func (e *Engine) SolveFV()  { e.solve(e.FinN, e.FinI/100, e.FinPV, e.FinPMT, NaNf64()) }
+
+func (e *Engine) solve(n, i, pv, pmt, fv float64) {
+	v, err := SolveTVM(n, i, pv, pmt, fv, Timing(e.Flags.Begin))
+	if err != nil {
+		e.X = math.NaN()
+		return
+	}
+	e.Push()
+	e.X = clamp(v)
 	e.Flags.StackLift = true
 }
 
-func (e *Engine) SolvePV() {
-	e.Push()
-	e.X = clamp(tvmPV(e.FinI/100, e.FinN, e.FinPMT, e.FinFV, e.Flags.Begin))
-	e.Flags.StackLift = true
-}
-
-func (e *Engine) SolvePMT() {
-	e.Push()
-	e.X = clamp(tvmPMT(e.FinI/100, e.FinN, e.FinPV, e.FinFV, e.Flags.Begin))
-	e.Flags.StackLift = true
-}
-
-func (e *Engine) SolveFV() {
-	e.Push()
-	e.X = clamp(tvmFV(e.FinI/100, e.FinN, e.FinPV, e.FinPMT, e.Flags.Begin))
-	e.Flags.StackLift = true
-}
+func NaNf64() float64 { return math.NaN() }
 
 func tvmPV(i, n, pmt, fv float64, begin bool) float64 {
 	if isZero(i) {
