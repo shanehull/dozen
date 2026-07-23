@@ -485,6 +485,12 @@ func (c *CalcService) gPrefixed(op string, arg float64, argS string) {
 	case "BST":
 	case "GTO":
 	case "R/S":
+	case "12×":
+		c.finishEntry()
+		c.e.Mul12()
+	case "12÷":
+		c.finishEntry()
+		c.e.Div12()
 	case "+":
 		c.finishEntry()
 		c.e.LastXRecall()
