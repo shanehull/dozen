@@ -722,14 +722,12 @@ func trimZero(s string) string {
 		return s
 	}
 	i := 0
-	if s[0] == '-' {
+	neg := s[0] == '-'
+	if neg {
 		i = 1
 	}
 	for i < len(s)-1 && s[i] == '0' && s[i+1] != '.' {
 		i++
-	}
-	if i > 0 && s[0] == '-' {
-		return "-" + s[i:]
 	}
 	return s[i:]
 }

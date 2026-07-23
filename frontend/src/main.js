@@ -95,6 +95,7 @@ const ANNUN = ["f", "g", "BEGIN", "RAD", "D.MY", "PRGM"];
 function applyState(s) {
   const d = (s && s.display) || {};
   const sign = d.sign && d.sign.trim() ? d.sign : "";
+  signEl.textContent = sign;
   digitsEl.textContent = d.mantissa && d.mantissa.trim() ? d.mantissa.trim() : "0.00";
   const flags = (d.flags || []).map(f => String(f).toUpperCase());
   annunEl.innerHTML = ANNUN.map(a => {
