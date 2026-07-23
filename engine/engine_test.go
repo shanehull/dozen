@@ -425,8 +425,7 @@ func TestClearRegs(t *testing.T) {
 
 func TestPrefixF(t *testing.T) {
 	e := New()
-	e.X = 42
-	e.SetN()
+	e.SetN(42)
 	if e.FinN != 42 {
 		t.Fatalf("f+n: want FinN=42, got %v", e.FinN)
 	}

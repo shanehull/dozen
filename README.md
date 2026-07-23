@@ -24,64 +24,6 @@ Two things in one repo:
 go get github.com/shanehull/dozen/engine
 ```
 
-Two layers: pure functions for direct math, and `Engine` for stack/keystroke
-behaviour that the app is built on.
-
-## Functional API
-
-Rates are per-period fractions (`0.05` = 5%). Inflows positive, outflows
-negative. `engine.End` (ordinary annuity) or `engine.Begin` (annuity due).
-
-```go
-import "github.com/shanehull/dozen/engine"
-
-pmt := engine.PMT(0.06/12, 360, 300000, 0, engine.End)
-fmt.Printf("%.2f\n", -pmt) // 1798.65
-
-npv := engine.NPV(0.10, -100000, 30000, 40000, 50000, 60000)
-fmt.Printf("%.2f\n", npv)  // 38877.13
-
-irr, _ := engine.IRR(-100000, 40000, 50000, 30000)
-fmt.Printf("%.2f%%\n", irr*100) // 24.89%
-```
-
-### TVM
-
-```go
-FV(rate, n, pv, pmt float64, when Timing) float64
-PV(rate, n, pmt, fv float64, when Timing) float64
-PMT(rate, n, pv, fv float64, when Timing) float64
-NPer(rate, pmt, pv, fv float64, when Timing) (float64, error)
-Rate(n, pmt, pv, fv float64, when Timing) (float64, error)
-SolveTVM(n, i, pv, pmt, fv float64, when Timing) (float64, error)
-```
-
-`SolveTVM` is the unified solver — pass `math.NaN()` for exactly one variable.
-
-```go
-i, _ := engine.SolveTVM(360, math.NaN(), 300000, -1798.65, 0, engine.End)
-fmt.Printf("%.4f%%\n", i*12*100) // 6.00% APR
-```
-
-### Cash flows
-
-```go
-NPV(rate float64, cashflows ...float64) float64
-IRR(cashflows ...float64) (float64, error)
-```
-
-### Depreciation
-
-`factorPct` = declining-balance factor as percent (200 = double-declining).
-
-```go
-DepSL(cost, salvage, life, period float64) (dep, remaining float64)
-DepSOYD(cost, salvage, life, period float64) (dep, remaining float64)
-DepDB(cost, salvage, life, period, factorPct float64) (dep, remaining float64)
-```
-
-## Engine
-
 `Engine` is an RPN calculator with a four-level stack, 20 memory registers,
 TVM and cash-flow slots, statistics accumulation, and program memory.
 
@@ -91,9 +33,9 @@ c := engine.New()
 c.X = 2; c.Enter(); c.X = 3
 c.Add()                    // c.X == 5
 
-c.X = 360; c.SetN()        // FinN = 360
-c.X = 5; c.SetI()          // FinI = 5
-c.X = -1000; c.SetPV()     // FinPV = -1000
+c.SetN(360)                // FinN = 360
+c.SetI(5)                  // FinI = 5
+c.SetPV(-1000)             // FinPV = -1000
 c.SolvePMT()               // c.X == monthly payment
 
 c.X = 4; c.Sqrt()          // c.X == 2
@@ -109,7 +51,7 @@ c.Restore(state)
 | ------------ | ---------------------------------------------------------------------------------------------- |
 | Stack        | `Enter`, `Clx`, `Chs`, `XY`, `RollDown`, `RollUp`, `LastXRecall`                               |
 | Arithmetic   | `Add`, `Sub`, `Mul`, `Div`, `YPowX`                                                            |
-| TVM store    | `SetN`, `SetI`, `SetPV`, `SetPMT`, `SetFV`                                                     |
+| TVM store    | `SetN(n)`, `SetI(i)`, `SetPV(pv)`, `SetPMT(pmt)`, `SetFV(fv)`                                      |
 | TVM solve    | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV`                                           |
 | Cash flow    | `NPV`, `IRR`                                                                                   |
 | Amortization | `Amortize`                                                                                     |
@@ -121,8 +63,7 @@ c.Restore(state)
 | Percent      | `Pct`, `PctChg`, `PctTotal`                                                                    |
 | Utility      | `Abs`, `Intg`, `Frac`, `Exp`, `Exp10`                                                          |
 | Date         | `DaysBetween`, `DateAdd`                                                                       |
-| Memory       | `Store(n)`, `Recall(n)`                                                                        |
-| Program      | `SST`, `BST`, `Goto(line)`                                                                     |
+| Memory       | `Store(n)`, `Recall(n)`                                                                        || Program      | `SST`, `BST`, `Goto(line)`                                                                     |
 | State        | `Snapshot`, `Restore`                                                                          |
 | Clear        | `ClearFin`, `ClearReg`, `ClearStats`, `ClearPgm`                                               |
 

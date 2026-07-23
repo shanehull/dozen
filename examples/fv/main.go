@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
-	// $10K invested for 20 years at 8% (outflow now → negative PV).
-	fv := engine.FV(0.08, 20, -10000, 0, engine.End)
-	fmt.Printf("$10K @ 8%% / 20yr → $%.2f\n", fv)
+	e := engine.New()
+	e.SetN(20)      // 20 years
+	e.SetI(8)       // 8% per period
+	e.SetPV(-10000) // $10,000 invested (outflow)
+	e.SolveFV()
+	fmt.Printf("$10K @ 8%% / 20yr → $%.2f\n", e.X)
 }
