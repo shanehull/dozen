@@ -214,7 +214,7 @@ body {
 
 /* blue (g) label under the primary, on the key face */
 .key .glabel {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
   color: var(--blue);
