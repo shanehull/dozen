@@ -51,7 +51,7 @@ c.Restore(state)
 | ------------ | ---------------------------------------------------------------------------------------------- |
 | Stack        | `Enter`, `Clx`, `Chs`, `XY`, `RollDown`, `RollUp`, `LastXRecall`                               |
 | Arithmetic   | `Add`, `Sub`, `Mul`, `Div`, `YPowX`                                                            |
-| TVM store    | `SetN(n)`, `SetI(i)`, `SetPV(pv)`, `SetPMT(pmt)`, `SetFV(fv)`                                      |
+| TVM store    | `SetN(n)`, `SetI(i)`, `SetPV(pv)`, `SetPMT(pmt)`, `SetFV(fv)`                                  |
 | TVM solve    | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV`                                           |
 | Cash flow    | `NPV`, `IRR`                                                                                   |
 | Amortization | `Amortize`                                                                                     |
@@ -63,22 +63,23 @@ c.Restore(state)
 | Percent      | `Pct`, `PctChg`, `PctTotal`                                                                    |
 | Utility      | `Abs`, `Intg`, `Frac`, `Exp`, `Exp10`                                                          |
 | Date         | `DaysBetween`, `DateAdd`                                                                       |
-| Memory       | `Store(n)`, `Recall(n)`                                                                        || Program      | `SST`, `BST`, `Goto(line)`                                                                     |
+| Memory       | `Store(n)`, `Recall(n)`                                                                        |
+| Program      | `SST`, `BST`, `Goto(line)`                                                                     |
 | State        | `Snapshot`, `Restore`                                                                          |
 | Clear        | `ClearFin`, `ClearReg`, `ClearStats`, `ClearPgm`                                               |
 
 ### Fields
 
 ```go
-c.X, c.Y, c.Z, c.T                // stack registers
-c.LastX                            // last X before operation
-c.Mem[0]..c.Mem[19]                // 20 general registers
-c.FinN, c.FinI, c.FinPV, c.FinPMT, c.FinFV  // TVM registers
-c.FinCF0, c.FinCFj, c.FinNj, c.FinCfCnt     // cash-flow registers
-c.AmortN, c.AmortInt, c.AmortPrin           // amortization results
-c.Flags.Begin, c.Flags.Dmy, c.Flags.Angle   // calculator mode
+c.X, c.Y, c.Z, c.T                            // stack registers
+c.LastX                                       // last X before operation
+c.Mem[0]..c.Mem[19]                           // 20 general registers
+c.FinN, c.FinI, c.FinPV, c.FinPMT, c.FinFV    // TVM registers
+c.FinCF0, c.FinCFj, c.FinNj, c.FinCfCnt       // cash-flow registers
+c.AmortN, c.AmortInt, c.AmortPrin             // amortization results
+c.Flags.Begin, c.Flags.Dmy, c.Flags.Angle     // calculator mode
 c.Flags.StackLift                             // stack lift flag
-c.Program, c.PgmLen, c.PgmPC                 // program storage
+c.Program, c.PgmLen, c.PgmPC                  // program storage
 ```
 
 ## Examples
