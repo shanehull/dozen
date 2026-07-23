@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/shanehull/dozen/compare/v1.0.0...v1.0.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* wire g-shift 12x and 12÷ on n/i keys ([#19](https://github.com/shanehull/dozen/issues/19)) ([963d6f2](https://github.com/shanehull/dozen/commit/963d6f2d39eb9f7d5698c81acf999ffb318ad252))
+
 ## [1.0.0](https://github.com/shanehull/dozen/compare/v0.3.0...v1.0.0) (2026-07-23)
 
 
