@@ -11,8 +11,8 @@ const NOP = "NOP";
 // fixArg: digit value used for f+digit (FIX n).
 const KEYS = [
   // row 1
-  { r:1,c:1,  prim:"n",   f:"AMORT", g:"12ˣ", op:"n",   fop:"AMORT", gop:NOP,  tvm:true },
-  { r:1,c:2,  prim:"i",   f:"INT",   g:"12÷", op:"i",   fop:"INT",   gop:NOP,  tvm:true },
+  { r:1,c:1,  prim:"n",   f:"AMORT", g:"12ˣ", op:"n",   fop:"AMORT", gop:"12×", tvm:true },
+  { r:1,c:2,  prim:"i",   f:"INT",   g:"12÷", op:"i",   fop:"INT",   gop:"12÷", tvm:true },
   { r:1,c:3,  prim:"PV",  f:"NPV",   g:"CFo", op:"PV",  fop:"NPV",   gop:"CF0",  tvm:true },
   { r:1,c:4,  prim:"PMT", f:"RND",   g:"CFj", op:"PMT", fop:NOP,     gop:"CFj",  tvm:true },
   { r:1,c:5,  prim:"FV",  f:"IRR",   g:"Nⱼ",  op:"FV",  fop:"IRR",   gop:"Nj",   tvm:true },

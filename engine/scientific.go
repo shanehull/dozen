@@ -123,6 +123,16 @@ func (e *Engine) Sqr() {
 	e.X = clamp(e.X * e.X)
 }
 
+func (e *Engine) Mul12() {
+	e.LastX = e.X
+	e.X = clamp(e.X * 12)
+}
+
+func (e *Engine) Div12() {
+	e.LastX = e.X
+	e.X = clamp(e.X / 12)
+}
+
 func (e *Engine) Abs() {
 	e.X = math.Abs(e.X)
 }
