@@ -3,10 +3,10 @@
 :root {
   --calc-w: 856px;
   --calc-h: 486px;
-  --key-w: 62px;
-  --key-h: 46px;
+  --key-w: 66px;
+  --key-h: 50px;
   --col-gap: 9px;
-  --row-gap: 48px;
+  --row-gap: 52px;
   --gold: #e8892b;
   --blue: #4fb6da;
   --key-text: #eceae4;
@@ -204,17 +204,17 @@ body {
 
 /* primary label on key face */
 .key .prim {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   line-height: 1;
   color: var(--key-text);
 }
-.key .prim.sm { font-size: 12px; }
-.key .prim.xs { font-size: 10.5px; }
+.key .prim.sm { font-size: 14px; }
+.key .prim.xs { font-size: 12px; }
 
 /* blue (g) label under the primary, on the key face */
 .key .glabel {
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1;
   color: var(--blue);
@@ -242,7 +242,7 @@ body {
     0 -3px 4px rgba(0,0,0,.28) inset,
     0 2px 3px rgba(0,0,0,.55);
 }
-.key.fkey .prim { color: #3a2408; font-weight: 800; font-size: 17px; }
+.key.fkey .prim { color: #3a2408; font-weight: 800; font-size: 19px; }
 .key.gkey {
   background: linear-gradient(180deg, #34bce6 0%, #159fce 100%);
   box-shadow:
@@ -250,7 +250,7 @@ body {
     0 -3px 4px rgba(0,0,0,.28) inset,
     0 2px 3px rgba(0,0,0,.55);
 }
-.key.gkey .prim { color: #0a2f3d; font-weight: 800; font-size: 17px; }
+.key.gkey .prim { color: #0a2f3d; font-weight: 800; font-size: 19px; }
 
 .key.armed { outline: 2px solid #f0b45a; outline-offset: 1px; }
 

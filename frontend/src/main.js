@@ -20,7 +20,7 @@ const KEYS = [
   { r:1,c:7,  prim:"7",   f:"",      g:"BEG", op:"7",   fop:"FIX",   gop:"BEG", fixArg:7 },
   { r:1,c:8,  prim:"8",   f:"",      g:"END", op:"8",   fop:"FIX",   gop:"END", fixArg:8 },
   { r:1,c:9,  prim:"9",   f:"",      g:"MEM", op:"9",   fop:"FIX",   gop:"MEM", fixArg:9 },
-  { r:1,c:10, prim:"÷",   f:"",     g:"",    op:"÷",   fop:NOP,     gop:NOP },
+  { r:1,c:10, prim:"÷",   f:"",     g:"↩",  op:"÷",   fop:NOP,     gop:"÷" },
 
 
   // row 2
@@ -33,7 +33,7 @@ const KEYS = [
   { r:2,c:7,  prim:"4",   f:"",      g:"D.MY",op:"4",   fop:"FIX",   gop:"D.MY", fixArg:4 },
   { r:2,c:8,  prim:"5",   f:"",      g:"M.DY",op:"5",   fop:"FIX",   gop:"M.DY", fixArg:5 },
   { r:2,c:9,  prim:"6",   f:"",      g:"x̄w", op:"6",   fop:"FIX",   gop:"x̄w", fixArg:6 },
-  { r:2,c:10, prim:"×",   f:"",     g:"",    op:"×",   fop:NOP,     gop:NOP },
+  { r:2,c:10, prim:"×",   f:"",     g:"x²",  op:"×",   fop:NOP,     gop:"×" },
 
   // row 3
   { r:3,c:1,  prim:"R/S", f:"P/R",   g:"PSE", op:"R/S", fop:"P/R",   gop:"PSE", primClass:"sm" },
@@ -41,11 +41,11 @@ const KEYS = [
   { r:3,c:3,  prim:"R↓",  f:"PRGM",  g:"GTO", op:"R↓",  fop:"CLEAR PRGM", gop:"GTO" },
   { r:3,c:4,  prim:"x↔y", f:"FIN",   g:"x≤y", op:"x↔y", fop:"CLEAR FIN", gop:"x≤y", primClass:"xs" },
   { r:3,c:5,  prim:"CLx", f:"REG",   g:"x=0", op:"CLx", fop:"CLEAR REG", gop:"x=0", primClass:"sm" },
-  { enter:true, r:3, c:6, prim:"ENTER", f:"PREFIX", g:"LSTx", op:"ENTER", fop:"CLEAR PREFIX", gop:"LSTx" },
+  { enter:true, r:3, c:6, prim:"ENTER", f:"PREFIX", g:"",   op:"ENTER", fop:"CLEAR PREFIX", gop:NOP },
   { r:3,c:7,  prim:"1",   f:"",      g:"x̂,r", op:"1",  fop:NOP,     gop:NOP },
   { r:3,c:8,  prim:"2",   f:"",      g:"ŷ,r", op:"2",  fop:NOP,     gop:"ŷ,r" },
   { r:3,c:9,  prim:"3",   f:"",      g:"n!",  op:"3",   fop:NOP,     gop:"n!" },
-  { r:3,c:10, prim:"−",   f:"",     g:"",    op:"−",   fop:NOP,     gop:NOP },
+  { r:3,c:10, prim:"−",   f:"",     g:"←",   op:"−",   fop:NOP,     gop:"−" },
   // row 4
   { r:4,c:1,  prim:"ON",  f:"",      g:"",    op:"ON",  fop:NOP,     gop:NOP, primClass:"sm" },
   { r:4,c:2,  prim:"f",   f:"",      g:"",    op:"f",   special:"f" },
@@ -55,7 +55,7 @@ const KEYS = [
   { r:4,c:7,  prim:"0",   f:"",      g:"x̄",  op:"0",   fop:"FIX",   gop:"x̄", fixArg:0 },
   { r:4,c:8,  prim:".",   f:"",      g:"s",   op:".",   fop:NOP,     gop:"s" },
   { r:4,c:9,  prim:"Σ+",  f:"",      g:"Σ−",  op:"Σ+",  fop:NOP,     gop:NOP, primClass:"sm" },
-  { r:4,c:10, prim:"+",   f:"",      g:"",    op:"+",   fop:NOP,     gop:NOP },
+  { r:4,c:10, prim:"+",   f:"",      g:"LSTx", op:"+",   fop:NOP,     gop:"+" },
 ];
 
 // Groups drawn as gold brackets above the keys.
@@ -95,6 +95,7 @@ const ANNUN = ["f", "g", "BEGIN", "RAD", "D.MY", "PRGM"];
 function applyState(s) {
   const d = (s && s.display) || {};
   const sign = d.sign && d.sign.trim() ? d.sign : "";
+  signEl.textContent = sign;
   digitsEl.textContent = d.mantissa && d.mantissa.trim() ? d.mantissa.trim() : "0.00";
   const flags = (d.flags || []).map(f => String(f).toUpperCase());
   annunEl.innerHTML = ANNUN.map(a => {

@@ -21,14 +21,15 @@ type Display struct {
 // ---- service ---------------------------------------------------------------
 
 type CalcService struct {
-	e        *engine.Engine
-	hasEntry bool
-	buf      string
-	expBuf   string
-	hasDot   bool
-	hasSign  bool
-	inExp    bool
-	armed    string // "", "f", "g", "STO", "RCL"
+	e         *engine.Engine
+	hasEntry  bool
+	buf       string
+	expBuf    string
+	hasDot    bool
+	hasSign   bool
+	inExp     bool
+	armed     string // "", "f", "g", "STO", "RCL"
+	undoState *engine.EngineState
 }
 
 type KeyResult struct {
@@ -65,6 +66,12 @@ func (c *CalcService) PressKey(input KeyInput) KeyResult {
 		isDigit = true
 	}
 
+	// snapshot before every state-changing operation for single-level undo
+	if op != "f" && op != "g" && op != "STO" && op != "RCL" && !isDigit && op != "." && op != "CHS" && op != "EEX" && op != "ENTER" && op != "CLx" {
+		s := c.e.Snapshot()
+		c.undoState = &s
+	}
+
 	switch {
 	case c.armed == "f":
 		c.fPrefixed(op, arg, input.ArgS)
@@ -80,7 +87,6 @@ func (c *CalcService) PressKey(input KeyInput) KeyResult {
 		c.armed = ""
 	case op == "f" || op == "g":
 		c.armed = op
-		c.clearEntry()
 		return c.state()
 	case op == "STO" || op == "RCL":
 		c.armed = op
@@ -125,7 +131,6 @@ func (c *CalcService) PressKey(input KeyInput) KeyResult {
 		c.e.LastXRecall()
 	case op == "f" || op == "g":
 		c.armed = op
-		c.clearEntry()
 		return c.state()
 	case op == "STO" || op == "RCL":
 		c.armed = op
@@ -480,6 +485,31 @@ func (c *CalcService) gPrefixed(op string, arg float64, argS string) {
 	case "BST":
 	case "GTO":
 	case "R/S":
+	case "+":
+		c.finishEntry()
+		c.e.LastXRecall()
+	case "×":
+		c.finishEntry()
+		c.e.Sqr()
+	case "÷":
+		if c.undoState != nil {
+			c.e.Restore(*c.undoState)
+			c.undoState = nil
+		}
+	case "−":
+		c.backspace()
+	case "PMT":
+		c.finishEntry()
+		if c.e.FinCfCnt < 10 {
+			c.e.FinCFj[c.e.FinCfCnt] = c.e.X
+			c.e.FinCfCnt++
+		}
+	case "FV":
+		c.finishEntry()
+		n := int(c.e.X)
+		if n > 0 && c.e.FinCfCnt > 0 {
+			c.e.FinNj[c.e.FinCfCnt-1] = n
+		}
 	default:
 		_ = argS
 	}
@@ -563,6 +593,29 @@ func (c *CalcService) clearEntry() {
 	c.hasDot = false
 	c.hasSign = false
 	c.inExp = false
+}
+
+func (c *CalcService) backspace() {
+	if !c.hasEntry {
+		// not in an active entry; start editing the current X value
+		c.buf = strconv.FormatFloat(c.e.X, 'f', -1, 64)
+		if len(c.buf) > 0 {
+			c.buf = c.buf[:len(c.buf)-1]
+		}
+		c.hasEntry = true
+	} else {
+		if c.inExp && len(c.expBuf) > 0 {
+			c.expBuf = c.expBuf[:len(c.expBuf)-1]
+		} else if !c.inExp && len(c.buf) > 0 {
+			c.buf = c.buf[:len(c.buf)-1]
+		}
+	}
+	if c.buf == "" || c.buf == "-" || c.buf == "." || c.buf == "-." {
+		c.clearEntry()
+		c.e.X = 0
+	} else {
+		c.e.X = c.parseBuf()
+	}
 }
 
 func (c *CalcService) parseBuf() float64 {
@@ -669,14 +722,12 @@ func trimZero(s string) string {
 		return s
 	}
 	i := 0
-	if s[0] == '-' {
+	neg := s[0] == '-'
+	if neg {
 		i = 1
 	}
 	for i < len(s)-1 && s[i] == '0' && s[i+1] != '.' {
 		i++
-	}
-	if i > 0 && s[0] == '-' {
-		return "-" + s[i:]
 	}
 	return s[i:]
 }
