@@ -2,15 +2,15 @@ package engine
 
 import "math"
 
-func (e *Engine) SetN()   { e.FinN = e.X }
-func (e *Engine) SetI()   { e.FinI = e.X }
-func (e *Engine) SetPV()  { e.FinPV = e.X }
-func (e *Engine) SetPMT() { e.FinPMT = e.X }
-func (e *Engine) SetFV()  { e.FinFV = e.X }
+func (e *Engine) SetN(n float64)     { e.FinN = n }
+func (e *Engine) SetI(i float64)     { e.FinI = i }
+func (e *Engine) SetPV(pv float64)   { e.FinPV = pv }
+func (e *Engine) SetPMT(pmt float64) { e.FinPMT = pmt }
+func (e *Engine) SetFV(fv float64)   { e.FinFV = fv }
 
-func (e *Engine) SolveN() { e.solve(NaNf64(), e.FinI/100, e.FinPV, e.FinPMT, e.FinFV) }
+func (e *Engine) SolveN() { e.solve(math.NaN(), e.FinI/100, e.FinPV, e.FinPMT, e.FinFV) }
 func (e *Engine) SolveI() {
-	v, err := SolveTVM(e.FinN, NaNf64(), e.FinPV, e.FinPMT, e.FinFV, Timing(e.Flags.Begin))
+	v, err := solveTVM(e.FinN, math.NaN(), e.FinPV, e.FinPMT, e.FinFV, timing(e.Flags.Begin))
 	if err != nil {
 		e.X = math.NaN()
 		return
@@ -19,12 +19,12 @@ func (e *Engine) SolveI() {
 	e.X = clamp(v * 100)
 	e.Flags.StackLift = true
 }
-func (e *Engine) SolvePV()  { e.solve(e.FinN, e.FinI/100, NaNf64(), e.FinPMT, e.FinFV) }
-func (e *Engine) SolvePMT() { e.solve(e.FinN, e.FinI/100, e.FinPV, NaNf64(), e.FinFV) }
-func (e *Engine) SolveFV()  { e.solve(e.FinN, e.FinI/100, e.FinPV, e.FinPMT, NaNf64()) }
+func (e *Engine) SolvePV()  { e.solve(e.FinN, e.FinI/100, math.NaN(), e.FinPMT, e.FinFV) }
+func (e *Engine) SolvePMT() { e.solve(e.FinN, e.FinI/100, e.FinPV, math.NaN(), e.FinFV) }
+func (e *Engine) SolveFV()  { e.solve(e.FinN, e.FinI/100, e.FinPV, e.FinPMT, math.NaN()) }
 
 func (e *Engine) solve(n, i, pv, pmt, fv float64) {
-	v, err := SolveTVM(n, i, pv, pmt, fv, Timing(e.Flags.Begin))
+	v, err := solveTVM(n, i, pv, pmt, fv, timing(e.Flags.Begin))
 	if err != nil {
 		e.X = math.NaN()
 		return
@@ -33,8 +33,6 @@ func (e *Engine) solve(n, i, pv, pmt, fv float64) {
 	e.X = clamp(v)
 	e.Flags.StackLift = true
 }
-
-func NaNf64() float64 { return math.NaN() }
 
 func tvmPV(i, n, pmt, fv float64, begin bool) float64 {
 	if isZero(i) {
@@ -100,39 +98,20 @@ func (e *Engine) cashflows() []float64 {
 }
 
 func (e *Engine) NPV() {
-	e.X = clamp(NPV(e.X/100, e.cashflows()...))
+	e.X = clamp(npv(e.X/100, e.cashflows()...))
 	e.Flags.StackLift = true
 }
 
 func (e *Engine) IRR() {
-	r, _ := IRR(e.cashflows()...)
+	r, _ := irr(e.cashflows()...)
 	e.result(r * 100)
 }
 
 func (e *Engine) Amortize() {
-	n := e.X
-	i := e.FinI / 100
-	pv := e.FinPV
-	pmt := e.FinPMT
-	begin := e.Flags.Begin
-	totalInt, totalPrin := 0.0, 0.0
-	for k := 1; k <= int(n); k++ {
-		interest := pv * i
-		if begin {
-			interest = 0
-			pv -= pmt
-			if pv < 0 {
-				pv = 0
-			}
-		} else {
-			pv -= pmt - interest
-		}
-		totalInt += interest
-		totalPrin += pmt - interest
-	}
-	e.AmortInt = clamp(totalInt)
-	e.AmortPrin = clamp(totalPrin)
-	e.AmortN = n
+	totalInt, totalPrin := amort(e.FinI/100, e.X, e.FinPV, e.FinPMT, bool(e.Flags.Begin))
+	e.AmortInt = totalInt
+	e.AmortPrin = totalPrin
+	e.AmortN = e.X
 	e.X = e.AmortInt
 	e.Push()
 	e.X = e.AmortPrin
@@ -141,52 +120,21 @@ func (e *Engine) Amortize() {
 }
 
 func (e *Engine) BondPrice() {
-	ytm := e.Y / 100
-	coupon := e.X
-	n := e.FinN
-	price := 0.0
-	for k := 1.0; k <= n; k++ {
-		price += coupon / 2 / math.Pow(1+ytm/2, k)
-	}
-	price += 100 / math.Pow(1+ytm/2, n)
+	price := bondPrice(e.Y/100, e.X, e.FinN)
 	e.LastX = e.X
-	e.X = clamp(price)
+	e.X = price
 	e.Tuck()
 	e.Flags.StackLift = true
 }
 
 func (e *Engine) BondYield() {
-	price := e.X
-	coupon := e.Y
-	n := e.FinN
-	guess := coupon / price
-	for iter := 0; iter < 100; iter++ {
-		p := 0.0
-		for k := 1.0; k <= n; k++ {
-			p += coupon / 2 / math.Pow(1+guess/2, k)
-		}
-		p += 100 / math.Pow(1+guess/2, n)
-		f := p - price
-		d := 0.0
-		for k := 1.0; k <= n; k++ {
-			d -= float64(k) * coupon / (4 * math.Pow(1+guess/2, k+1))
-		}
-		d -= n * 100 / (4 * math.Pow(1+guess/2, n+1))
-		if isZero(d) {
-			break
-		}
-		next := guess - f/d
-		if math.Abs(next-guess) < 1e-10 {
-			e.LastX = e.X
-			e.X = clamp(next * 100)
-			e.Tuck()
-			e.Flags.StackLift = true
-			return
-		}
-		guess = next
+	ytm, err := bondYield(e.X, e.Y, e.FinN)
+	if err != nil {
+		e.X = math.NaN()
+		return
 	}
 	e.LastX = e.X
-	e.X = clamp(guess * 100)
+	e.X = clamp(ytm * 100)
 	e.Tuck()
 	e.Flags.StackLift = true
 }
@@ -199,7 +147,7 @@ func (e *Engine) depResult(dep, remaining float64) {
 }
 
 func (e *Engine) DepreciationSL() {
-	dep, rem := DepSL(e.FinPV, e.FinFV, e.FinN, e.X)
+	dep, rem := depSL(e.FinPV, e.FinFV, e.FinN, e.X)
 	if math.IsNaN(dep) {
 		e.X = math.NaN()
 		return
@@ -208,7 +156,7 @@ func (e *Engine) DepreciationSL() {
 }
 
 func (e *Engine) DepreciationSOYD() {
-	dep, rem := DepSOYD(e.FinPV, e.FinFV, e.FinN, e.X)
+	dep, rem := depSOYD(e.FinPV, e.FinFV, e.FinN, e.X)
 	if math.IsNaN(dep) {
 		e.X = math.NaN()
 		return
@@ -217,7 +165,7 @@ func (e *Engine) DepreciationSOYD() {
 }
 
 func (e *Engine) DepreciationDB() {
-	dep, rem := DepDB(e.FinPV, e.FinFV, e.FinN, e.X, e.FinI)
+	dep, rem := depDB(e.FinPV, e.FinFV, e.FinN, e.X, e.FinI)
 	if math.IsNaN(dep) {
 		e.X = math.NaN()
 		return

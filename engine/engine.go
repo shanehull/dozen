@@ -2,8 +2,6 @@ package engine
 
 import "math"
 
-const MaxDigits = 10
-
 type AngleMode int
 
 const (

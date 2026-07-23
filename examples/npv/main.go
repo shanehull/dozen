@@ -7,9 +7,18 @@ import (
 )
 
 func main() {
-	// Initial outlay followed by four years of returns, discounted at 10%.
-	npv := engine.NPV(0.10, -100000, 30000, 40000, 50000, 60000)
-	irr, _ := engine.IRR(-100000, 30000, 40000, 50000, 60000)
-	fmt.Printf("NPV @ 10%%: $%.2f\n", npv)
-	fmt.Printf("IRR: %.2f%%\n", irr*100)
+	e := engine.New()
+	e.FinCF0 = -100000
+	e.FinCFj[0] = 30000
+	e.FinCFj[1] = 40000
+	e.FinCFj[2] = 50000
+	e.FinCFj[3] = 60000
+	e.FinCfCnt = 4
+
+	e.X = 10
+	e.NPV()
+	fmt.Printf("NPV @ 10%%: $%.2f\n", e.X)
+
+	e.IRR()
+	fmt.Printf("IRR: %.2f%%\n", e.X)
 }
