@@ -163,15 +163,15 @@ func (c *CalcService) PressKey(input KeyInput) KeyResult {
 func (c *CalcService) storeTVM(op string) {
 	switch op {
 	case "n":
-		c.e.SetN(c.e.X)
+		c.e.SetN()
 	case "i":
-		c.e.SetI(c.e.X)
+		c.e.SetI()
 	case "PV":
-		c.e.SetPV(c.e.X)
+		c.e.SetPV()
 	case "PMT":
-		c.e.SetPMT(c.e.X)
+		c.e.SetPMT()
 	case "FV":
-		c.e.SetFV(c.e.X)
+		c.e.SetFV()
 	}
 	c.e.Flags.StackLift = false
 }

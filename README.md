@@ -10,9 +10,9 @@
 
 Two things in one repo:
 
-- **`engine`** — a generic RPN calculator library: stack, registers, TVM, cash
+- **`engine`**: a generic RPN calculator library: stack, registers, TVM, cash
   flows, statistics, depreciation, date math. No GUI dependency.
-- **App** — a cross-platform financial calculator built with
+- **App**: a cross-platform financial calculator built with
   [Wails v3](https://v3.wails.io) on top of the engine. macOS, Windows, Linux,
   iOS, Android.
 
@@ -45,13 +45,19 @@ c.Snapshot()               // EngineState for persistence
 c.Restore(state)
 ```
 
+Set methods are variadic. Omit the argument to store the current X value:
+
+```go
+c.X = 8; c.SetI()          // equivalent to c.SetI(8)
+```
+
 ### Methods
 
 | Category     | Methods                                                                                        |
 | ------------ | ---------------------------------------------------------------------------------------------- |
 | Stack        | `Enter`, `Clx`, `Chs`, `XY`, `RollDown`, `RollUp`, `LastXRecall`                               |
 | Arithmetic   | `Add`, `Sub`, `Mul`, `Div`, `YPowX`                                                            |
-| TVM store    | `SetN(n)`, `SetI(i)`, `SetPV(pv)`, `SetPMT(pmt)`, `SetFV(fv)`                                  |
+| TVM store    | `SetN(n?)`, `SetI(i?)`, `SetPV(pv?)`, `SetPMT(pmt?)`, `SetFV(fv?)`                             |
 | TVM solve    | `SolveN`, `SolveI`, `SolvePV`, `SolvePMT`, `SolveFV`                                           |
 | Cash flow    | `NPV`, `IRR`                                                                                   |
 | Amortization | `Amortize`                                                                                     |
@@ -67,6 +73,9 @@ c.Restore(state)
 | Program      | `SST`, `BST`, `Goto(line)`                                                                     |
 | State        | `Snapshot`, `Restore`                                                                          |
 | Clear        | `ClearFin`, `ClearReg`, `ClearStats`, `ClearPgm`                                               |
+
+`SetN/SetI/SetPV/SetPMT/SetFV` are variadic: omit the argument to store the
+current X register value (`e.SetN()` is shorthand for `e.SetN(e.X)`).
 
 ### Fields
 

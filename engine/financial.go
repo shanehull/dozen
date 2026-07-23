@@ -2,11 +2,41 @@ package engine
 
 import "math"
 
-func (e *Engine) SetN(n float64)     { e.FinN = n }
-func (e *Engine) SetI(i float64)     { e.FinI = i }
-func (e *Engine) SetPV(pv float64)   { e.FinPV = pv }
-func (e *Engine) SetPMT(pmt float64) { e.FinPMT = pmt }
-func (e *Engine) SetFV(fv float64)   { e.FinFV = fv }
+func (e *Engine) SetN(v ...float64) {
+	if len(v) > 0 {
+		e.FinN = v[0]
+	} else {
+		e.FinN = e.X
+	}
+}
+func (e *Engine) SetI(v ...float64) {
+	if len(v) > 0 {
+		e.FinI = v[0]
+	} else {
+		e.FinI = e.X
+	}
+}
+func (e *Engine) SetPV(v ...float64) {
+	if len(v) > 0 {
+		e.FinPV = v[0]
+	} else {
+		e.FinPV = e.X
+	}
+}
+func (e *Engine) SetPMT(v ...float64) {
+	if len(v) > 0 {
+		e.FinPMT = v[0]
+	} else {
+		e.FinPMT = e.X
+	}
+}
+func (e *Engine) SetFV(v ...float64) {
+	if len(v) > 0 {
+		e.FinFV = v[0]
+	} else {
+		e.FinFV = e.X
+	}
+}
 
 func (e *Engine) SolveN() { e.solve(math.NaN(), e.FinI/100, e.FinPV, e.FinPMT, e.FinFV) }
 func (e *Engine) SolveI() {
